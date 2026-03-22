@@ -4,11 +4,17 @@ This document provides technical details about the opencode.nvim implementation 
 
 ## Overview
 
-The plugin implements a WebSocket server in pure Lua that speaks the same protocol as Anthropic's official IDE extensions. It's built entirely with Neovim built-ins (`vim.loop`, `vim.json`) with zero external dependencies.
+The plugin provides terminal-based integration with OpenCode, supporting file references and selection sharing through the terminal interface. It includes a WebSocket server implementation (WIP - work in progress for OpenCode) that was originally designed for Claude Code's MCP protocol. The current functional implementation uses terminal stdin injection for sending file references with autocomplete simulation.
+
+The plugin is built entirely with Neovim built-ins (`vim.loop`, `vim.json`) with zero external dependencies.
 
 ## Core Components
 
 ### 1. WebSocket Server (`server/`)
+
+**Status: Work in Progress (WIP) for OpenCode**
+
+The WebSocket server was originally designed for Claude Code's MCP protocol. While the implementation is complete and functional for Claude Code, OpenCode currently uses terminal-based integration instead. The server code is preserved for future use if OpenCode implements WebSocket support.
 
 A complete RFC 6455 WebSocket implementation in pure Lua:
 
@@ -41,7 +47,7 @@ Key implementation details:
 
 ### 2. Lock File System (`lockfile.lua`)
 
-Manages discovery files for Claude CLI:
+Manages discovery files for OpenCode CLI:
 
 ```lua
 -- Atomic file writing to prevent partial reads
@@ -59,7 +65,9 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 
 ### 3. MCP Tool System (`tools/`)
 
-Dynamic tool registration with JSON schema validation:
+**Status: Work in Progress (WIP) for OpenCode**
+
+The MCP Tool System was originally designed for Claude Code's WebSocket MCP protocol. While implemented and functional for Claude Code, it currently requires the WebSocket server which is WIP for OpenCode. The tool registration system supports dynamic tool registration with JSON schema validation:
 
 ```lua
 -- Tool registration
@@ -227,10 +235,10 @@ describe("websocket server", function()
   end)
 end)
 
--- Integration tests: end-to-end with mock Claude
+-- Integration tests: end-to-end with mock OpenCode
 describe("full flow", function()
   it("handles tool calls", function()
-    local mock_claude = create_mock_client()
+    local mock_opencode = create_mock_client()
     -- Test complete message flow
   end)
 end)

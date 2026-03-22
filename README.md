@@ -16,7 +16,6 @@ When Anthropic released OpenCode, they only supported VS Code and JetBrains. As 
 
 - 🚀 **Pure Lua, Zero Dependencies** — Built entirely with `vim.loop` and Neovim built-ins
 - 🔌 **100% Protocol Compatible** — Same WebSocket MCP implementation as official extensions
-- 🎓 **Fully Documented Protocol** — Learn how to build your own integrations ([see PROTOCOL.md](./PROTOCOL.md))
 - ⚡ **First to Market** — Beat Anthropic to releasing Neovim support
 - 🛠️ **Built with AI** — Used OpenCode to reverse-engineer OpenCode's own protocol
 
@@ -53,8 +52,7 @@ That's it! The plugin will auto-configure everything else.
 ## Requirements
 
 - Neovim >= 0.8.0
-- [OpenCode CLI](https://opencode.ai/docs/) installed (default)
-- [OpenCode CLI](https://docs.anthropic.com/en/docs/claude-code) (optional, when `terminal_cmd` is set to `claude`)
+- [OpenCode CLI](https://opencode.ai/docs/) installed
 - [folke/snacks.nvim](https://github.com/folke/snacks.nvim) for enhanced terminal support
 
 ## Local Installation Configuration
@@ -78,7 +76,7 @@ Check your installation type:
 which opencode
 
 # Global installation shows: /usr/local/bin/opencode (or similar)
-# Local installation shows: alias to ~/.opencode/local/claude
+# Local installation shows: alias to ~/.opencode/local/opencode
 
 # Verify installation health
 opencode doctor
@@ -228,9 +226,6 @@ When OpenCode implements proper IDE integration API:
 
 The current terminal-based approach provides immediate functionality while we await official API support from OpenCode.
 
-📖 **[Read the full reverse-engineering story →](./STORY.md)**
-🔧 **[Complete protocol documentation →](./PROTOCOL.md)**
-
 ## Architecture
 
 Built with pure Lua and zero external dependencies:
@@ -339,162 +334,29 @@ require("opencode").setup({
 
 ## Floating Window Configuration
 
-The `snacks_win_opts` configuration allows you to create floating OpenCode terminals with custom positioning, sizing, and key bindings. Here are several practical examples:
-
-### Basic Floating Window with Ctrl+, Toggle
-
-```lua
-local toggle_key = "<C-,>"
-return {
-  {
-    "lanjoni/opencode.nvim",
-    dependencies = { "folke/snacks.nvim" },
-    keys = {
-      { toggle_key, "<cmd>OpenCodeFocus<cr>", desc = "OpenCode", mode = { "n", "x" } },
-    },
-    opts = {
-      terminal = {
-        ---@module "snacks"
-        ---@type snacks.win.Config|{}
-        snacks_win_opts = {
-          position = "float",
-          width = 0.9,
-          height = 0.9,
-          keys = {
-            claude_hide = {
-              toggle_key,
-              function(self)
-                self:hide()
-              end,
-              mode = "t",
-              desc = "Hide",
-            },
-          },
-        },
-      },
-    },
-  },
-}
-```
-
-<details>
-<summary>Alternative with Meta+, (Alt+,) Toggle</summary>
-
-```lua
-local toggle_key = "<M-,>"  -- Alt/Meta + comma
-return {
-  {
-    "lanjoni/opencode.nvim",
-    dependencies = { "folke/snacks.nvim" },
-    keys = {
-      { toggle_key, "<cmd>OpenCodeFocus<cr>", desc = "OpenCode", mode = { "n", "x" } },
-    },
-    opts = {
-      terminal = {
-        snacks_win_opts = {
-          position = "float",
-          width = 0.8,
-          height = 0.8,
-          border = "rounded",
-          keys = {
-            claude_hide = { toggle_key, function(self) self:hide() end, mode = "t", desc = "Hide" },
-          },
-        },
-      },
-    },
-  },
-}
-```
-
-</details>
-
-<details>
-<summary>Centered Floating Window with Custom Styling</summary>
-
-```lua
-require("opencode").setup({
-  terminal = {
-    snacks_win_opts = {
-      position = "float",
-      width = 0.6,
-      height = 0.6,
-      border = "double",
-      backdrop = 80,
-      keys = {
-        claude_hide = { "<Esc>", function(self) self:hide() end, mode = "t", desc = "Hide" },
-        claude_close = { "q", "close", mode = "n", desc = "Close" },
-      },
-    },
-  },
-})
-```
-
-</details>
-
-<details>
-<summary>Multiple Key Binding Options</summary>
+The `snacks_win_opts` configuration allows you to create floating OpenCode terminals:
 
 ```lua
 {
   "lanjoni/opencode.nvim",
   dependencies = { "folke/snacks.nvim" },
   keys = {
-    { "<C-,>", "<cmd>OpenCodeFocus<cr>", desc = "OpenCode (Ctrl+,)", mode = { "n", "x" } },
-    { "<M-,>", "<cmd>OpenCodeFocus<cr>", desc = "OpenCode (Alt+,)", mode = { "n", "x" } },
-    { "<leader>tc", "<cmd>OpenCodeFocus<cr>", desc = "Toggle OpenCode", mode = { "n", "x" } },
+    { "<C-,>", "<cmd>OpenCodeFocus<cr>", desc = "OpenCode", mode = { "n", "x" } },
   },
   opts = {
     terminal = {
       snacks_win_opts = {
         position = "float",
-        width = 0.85,
-        height = 0.85,
-        border = "rounded",
+        width = 0.9,
+        height = 0.9,
         keys = {
-          -- Multiple ways to hide from terminal mode
-          claude_hide_ctrl = { "<C-,>", function(self) self:hide() end, mode = "t", desc = "Hide (Ctrl+,)" },
-          claude_hide_alt = { "<M-,>", function(self) self:hide() end, mode = "t", desc = "Hide (Alt+,)" },
-          claude_hide_esc = { "<C-\\><C-n>", function(self) self:hide() end, mode = "t", desc = "Hide (Ctrl+\\)" },
+          hide = { "<C-,>", function(self) self:hide() end, mode = "t", desc = "Hide" },
         },
       },
     },
   },
 }
 ```
-
-</details>
-
-<details>
-<summary>Window Position Variations</summary>
-
-```lua
--- Bottom floating (like a drawer)
-snacks_win_opts = {
-  position = "bottom",
-  height = 0.4,
-  width = 1.0,
-  border = "single",
-}
-
--- Side floating panel
-snacks_win_opts = {
-  position = "right",
-  width = 0.4,
-  height = 1.0,
-  border = "rounded",
-}
-
--- Small centered popup
-snacks_win_opts = {
-  position = "float",
-  width = 120,  -- Fixed width in columns
-  height = 30,  -- Fixed height in rows
-  border = "double",
-  backdrop = 90,
-}
-```
-
-</details>
 
 For complete configuration options, see:
 
@@ -681,25 +543,6 @@ The custom provider will automatically fall back to the native provider if valid
 
 Note: If your command or working directory may contain spaces or special characters, prefer returning a table of args from a function (e.g., `{ "alacritty", "--working-directory", cwd, "-e", "opencode", "--help" }`) to avoid shell-quoting issues.
 
-## Community Extensions
-
-The following are third-party community extensions that complement opencode.nvim. **These extensions are not affiliated with Coder and are maintained independently by community members.** We do not ensure that these extensions work correctly or provide support for them.
-
-### 🔍 [claude-fzf.nvim](https://github.com/pittcat/claude-fzf.nvim)
-
-Integrates fzf-lua's file selection with opencode.nvim's context management:
-
-- Batch file selection with fzf-lua multi-select
-- Smart search integration with grep → OpenCode
-- Tree-sitter based context extraction
-- Support for files, buffers, git files
-
-### 📚 [claude-fzf-history.nvim](https://github.com/pittcat/claude-fzf-history.nvim)
-
-Provides convenient OpenCode interaction history management and access for enhanced workflow continuity.
-
-> **Disclaimer**: These community extensions are developed and maintained by independent contributors. The authors and their extensions are not affiliated with Coder. Use at your own discretion and refer to their respective repositories for installation instructions, documentation, and support.
-
 ## Auto-Save Plugin Issues
 
 Using auto-save plugins can cause diff windows opened by OpenCode to immediately accept without waiting for input. You can avoid this using a custom condition:
@@ -719,7 +562,7 @@ opts = {
       return false
     end
 
-    -- Exclude claudecode diff buffers by buffer name patterns
+    -- Exclude opencode diff buffers by buffer name patterns
     local bufname = vim.api.nvim_buf_get_name(buf)
     if bufname:match("%(proposed%)") or
        bufname:match("%(NEW FILE %- proposed%)") or
@@ -727,14 +570,14 @@ opts = {
       return false
     end
 
-    -- Exclude by buffer variables (claudecode sets these)
+    -- Exclude by buffer variables (opencode sets these)
     if vim.b[buf].opencode_diff_tab_name or
        vim.b[buf].opencode_diff_new_win or
        vim.b[buf].opencode_diff_target_win then
-      return false
+       return false
     end
 
-    -- Exclude by buffer type (claudecode diff buffers use "acwrite")
+    -- Exclude by buffer type (opencode diff buffers use "acwrite")
     local buftype = fn.getbufvar(buf, "&buftype")
     if buftype == "acwrite" then
       return false
@@ -753,13 +596,13 @@ opts = {
 opts = {
   -- ... other options
   condition = function(buf)
-    -- Exclude claudecode diff buffers by buffer name patterns
+    -- Exclude opencode diff buffers by buffer name patterns
     local bufname = vim.api.nvim_buf_get_name(buf)
     if bufname:match('%(proposed%)') or bufname:match('%(NEW FILE %- proposed%)') or bufname:match('%(New%)') then
       return false
     end
 
-    -- Exclude by buffer variables (claudecode sets these)
+    -- Exclude by buffer variables (opencode sets these)
     if
       vim.b[buf].opencode_diff_tab_name
       or vim.b[buf].opencode_diff_new_win
@@ -768,7 +611,7 @@ opts = {
       return false
     end
 
-    -- Exclude by buffer type (claudecode diff buffers use "acwrite")
+    -- Exclude by buffer type (opencode diff buffers use "acwrite")
     local buftype = vim.fn.getbufvar(buf, '&buftype')
     if buftype == 'acwrite' then
       return false
@@ -783,15 +626,15 @@ opts = {
 
 ## Troubleshooting
 
-- **OpenCode not connecting?** Check `:OpenCodeStatus` and verify lock file exists in `~/.opencode/ide/` (or `$OPENCODE_CONFIG_DIR/ide/` if `CLAUDE_CONFIG_DIR` is set)
+- **OpenCode not connecting?** Check `:OpenCodeStatus` and verify lock file exists in `~/.opencode/ide/`
 - **Need debug logs?** Set `log_level = "debug"` in opts
 - **Terminal issues?** Try `provider = "native"` if using snacks.nvim
-- **Local installation not working?** If you used `opencode install`, set `terminal_cmd = "~/.opencode/local/opencode"` in your config. Check `which opencode` vs `ls ~/.opencode/local/claude` to verify your installation type.
+- **Local installation not working?** If you used `opencode install`, set `terminal_cmd = "~/.opencode/local/opencode"` in your config. Check `which opencode` vs `ls ~/.opencode/local/opencode` to verify your installation type.
 - **Native binary installation not working?** If you used the alpha native binary installer, run `opencode doctor` to verify installation health and use `which opencode` to find the binary path. Set `terminal_cmd = "/path/to/opencode"` with the detected path in your config.
 
 ## Contributing
 
-See [DEVELOPMENT.md](./DEVELOPMENT.md) for build instructions and development guidelines. Tests can be run with `make test`.
+Run tests with `make test` or `LUA_PATH="./lua/?.lua;./lua/?/init.lua;./?.lua;$LUA_PATH" busted tests/`.
 
 ## License
 
@@ -799,6 +642,5 @@ See [DEVELOPMENT.md](./DEVELOPMENT.md) for build instructions and development gu
 
 ## Acknowledgements
 
-- [OpenCode CLI](https://docs.anthropic.com/en/docs/claude-code) by Anthropic
-- Inspired by analyzing the official VS Code extension
+- [OpenCode CLI](https://opencode.ai) by Anthropic
 - Built with assistance from AI (how meta!)

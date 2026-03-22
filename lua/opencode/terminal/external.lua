@@ -32,7 +32,7 @@ function M.open(cmd_string, env_table)
   if is_valid() then
     -- External terminal is already running, we can't focus it programmatically
     -- Just log that it's already running
-    logger.debug("terminal", "External Claude terminal is already running")
+    logger.debug("terminal", "External OpenCode terminal is already running")
     return
   end
 
@@ -53,7 +53,7 @@ function M.open(cmd_string, env_table)
 
   -- Handle both string and function types
   if type(external_cmd) == "function" then
-    -- Call the function with the Claude command and env table
+    -- Call the function with the OpenCode command and env table
     local result = external_cmd(cmd_string, env_table)
     if not result then
       vim.notify("external_terminal_cmd function returned nil or false", vim.log.levels.ERROR)

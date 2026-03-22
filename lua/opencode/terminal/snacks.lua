@@ -22,7 +22,7 @@ local function setup_terminal_events(term_instance, config)
   if config.auto_close then
     term_instance:on("TermClose", function()
       if vim.v.event.status ~= 0 then
-        logger.error("terminal", "Claude exited with code " .. vim.v.event.status .. ".\nCheck for any errors.")
+        logger.error("terminal", "OpenCode exited with code " .. vim.v.event.status .. ".\nCheck for any errors.")
       end
 
       -- Clean up
@@ -174,7 +174,7 @@ function M.open(cmd_string, env_table, config, focus)
 
     local context = string.format("cmd='%s', opts=%s", cmd_string, vim.inspect(opts))
     local error_msg = string.format(
-      "Failed to open Claude terminal using Snacks. Details: %s. Context: %s",
+      "Failed to open OpenCode terminal using Snacks. Details: %s. Context: %s",
       table.concat(error_details, ", "),
       context
     )

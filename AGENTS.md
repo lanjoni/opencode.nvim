@@ -42,5 +42,5 @@
 
 ## Security & Configuration Tips
 
-- Do not commit secrets or local paths; prefer environment variables. The plugin honors `CLAUDE_CONFIG_DIR` for lock files.
+- Do not commit secrets or local paths; prefer environment variables. The plugin honors `OPENCODE_CONFIG_DIR` (with fallback to `CLAUDE_CONFIG_DIR` for backward compatibility) for lock files.
 - Local CLI paths (e.g., `opts.terminal_cmd`) should be configured in user config, not hardcoded in repo files.

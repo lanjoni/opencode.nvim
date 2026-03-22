@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # Simple openDiff test using websocat (if available) or curl
-# This script sends the same tool call that Claude Code would send
+# Note: This script tests the legacy WebSocket/MCP protocol which is WIP for OpenCode.
+# OpenCode currently uses terminal-based integration instead.
 
 set -e
 
 echo "🧪 Testing openDiff tool behavior..."
 
 # Find the port from lock file
-LOCK_DIR="$HOME/.claude/ide"
+LOCK_DIR="$HOME/.opencode/ide"
 if [[ ! -d $LOCK_DIR ]]; then
   echo "❌ Lock directory not found: $LOCK_DIR"
   echo "   Make sure Neovim with opencode.nvim is running"

@@ -42,7 +42,7 @@ local function ensure_opencode_started()
   end)
 
   if not ok_start then
-    vim.notify("ClaudeCode start crashed: " .. tostring(started_or_err), vim.log.levels.ERROR)
+    vim.notify("OpenCode start crashed: " .. tostring(started_or_err), vim.log.levels.ERROR)
     return false
   end
 
@@ -56,7 +56,7 @@ local function ensure_opencode_started()
     return true
   end
 
-  vim.notify("ClaudeCode failed to start: " .. tostring(port_or_err), vim.log.levels.ERROR)
+  vim.notify("OpenCode failed to start: " .. tostring(port_or_err), vim.log.levels.ERROR)
   return false
 end
 
@@ -66,17 +66,17 @@ vim.keymap.set("n", "<leader>ac", function()
     local terminal = require("opencode.terminal")
     terminal.simple_toggle({}, nil)
   end
-end, { desc = "Toggle Claude" })
+end, { desc = "Toggle OpenCode" })
 
 vim.keymap.set("n", "<leader>af", function()
   if ensure_opencode_started() then
     local terminal = require("opencode.terminal")
     terminal.focus_toggle({}, nil)
   end
-end, { desc = "Focus Claude" })
+end, { desc = "Focus OpenCode" })
 
-vim.keymap.set("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", { desc = "Accept diff" })
-vim.keymap.set("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", { desc = "Deny diff" })
+vim.keymap.set("n", "<leader>aa", "<cmd>OpenCodeDiffAccept<cr>", { desc = "Accept diff" })
+vim.keymap.set("n", "<leader>ad", "<cmd>OpenCodeDiffDeny<cr>", { desc = "Deny diff" })
 
 -- Convenience helpers for iterating on this fixture.
 vim.api.nvim_create_user_command("ReproEditConfig", function()

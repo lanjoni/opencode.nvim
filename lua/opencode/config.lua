@@ -67,7 +67,7 @@ function M.validate(config)
       if cmd_type == "string" and config.terminal.provider_opts.external_terminal_cmd ~= "" then
         assert(
           config.terminal.provider_opts.external_terminal_cmd:find("%%s"),
-          "terminal.provider_opts.external_terminal_cmd must contain '%s' placeholder for the Claude command"
+          "terminal.provider_opts.external_terminal_cmd must contain '%s' placeholder for the OpenCode command"
         )
       end
     end

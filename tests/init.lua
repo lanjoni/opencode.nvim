@@ -1,4 +1,4 @@
--- Test runner for Claude Code Neovim integration
+-- Test runner for OpenCode Neovim integration
 
 local M = {}
 

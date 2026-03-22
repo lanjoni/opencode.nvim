@@ -380,7 +380,7 @@ function M.open(cmd_string, env_table, effective_config, focus)
       -- If focus=false, preserve user context by staying in current window
     else
       if not open_terminal(cmd_string, env_table, effective_config, focus) then
-        vim.notify("Failed to open Claude terminal using native fallback.", vim.log.levels.ERROR)
+        vim.notify("Failed to open OpenCode terminal using native fallback.", vim.log.levels.ERROR)
       end
     end
   end
@@ -423,7 +423,7 @@ function M.simple_toggle(cmd_string, env_table, effective_config)
       else
         -- No existing terminal found, create a new one
         if not open_terminal(cmd_string, env_table, effective_config) then
-          vim.notify("Failed to open Claude terminal using native fallback (simple_toggle).", vim.log.levels.ERROR)
+          vim.notify("Failed to open OpenCode terminal using native fallback (simple_toggle).", vim.log.levels.ERROR)
         end
       end
     end
@@ -480,7 +480,7 @@ function M.focus_toggle(cmd_string, env_table, effective_config)
     else
       -- No existing terminal found, create a new one
       if not open_terminal(cmd_string, env_table, effective_config) then
-        vim.notify("Failed to open Claude terminal using native fallback (focus_toggle).", vim.log.levels.ERROR)
+          vim.notify("Failed to open OpenCode terminal using native fallback (focus_toggle).", vim.log.levels.ERROR)
       end
     end
   end

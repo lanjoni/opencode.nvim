@@ -37,7 +37,7 @@ local function test_opendiff_directly()
     old_file_path = readme_path,
     new_file_path = readme_path,
     new_file_contents = new_content,
-    tab_name = "✻ [Claude Code] README.md (test) ⧉",
+    tab_name = "✻ [OpenCode] README.md (test) ⧉",
   }
 
   print("📤 Calling openDiff handler...")

@@ -1,7 +1,8 @@
 #!/usr/bin/env lua
 
--- Test script that mimics Claude Code CLI sending an openDiff tool call
--- This helps automate testing of the openDiff blocking behavior
+-- Test script that mimics the legacy Claude Code CLI sending an openDiff tool call
+-- Note: This script is for testing the WebSocket/MCP protocol which is currently
+-- WIP (not functional) for OpenCode. OpenCode uses terminal-based integration.
 
 local socket = require("socket")
 local json = require("json") or require("cjson") or require("dkjson")

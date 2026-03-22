@@ -40,7 +40,7 @@ M.state = {
 
 ---Check if OpenCode is connected to WebSocket server
 ---@return boolean connected Whether OpenCode has active connections
-function M.is_claude_connected()
+function M.is_opencode_connected()
   if not M.state.server then
     return false
   end
@@ -83,7 +83,7 @@ local function clear_mention_queue()
   end
 end
 
----Process mentions when Claude is connected (debounced mode)
+---Process mentions when OpenCode is connected (debounced mode)
 local function process_connected_mentions()
   -- Reset the debounce timer
   if M.state.mention_timer then
@@ -140,7 +140,7 @@ local function queue_mention(file_path, start_line, end_line)
   logger.debug("queue", "Queued @ mention: " .. file_path .. " (queue size: " .. #M.state.mention_queue .. ")")
 
   -- Process based on connection state
-  if M.is_claude_connected() then
+  if M.is_opencode_connected() then
     -- Connected: Use debounced processing (old broadcast_queue behavior)
     process_connected_mentions()
   else
@@ -162,9 +162,9 @@ function M.process_mention_queue(from_new_connection)
     return
   end
 
-  if not M.is_claude_connected() then
+  if not M.is_opencode_connected() then
     -- Still disconnected or handshake not complete yet, wait for readiness
-    logger.debug("queue", "Claude not ready (no handshake). Keeping ", #M.state.mention_queue, " mentions queued")
+    logger.debug("queue", "OpenCode not ready (no handshake). Keeping ", #M.state.mention_queue, " mentions queued")
 
     -- If triggered by a new connection, poll until handshake completes (bounded by connection_timeout timer)
     if from_new_connection then
@@ -243,16 +243,16 @@ function M.process_mention_queue(from_new_connection)
         send_mention_sequential(1)
       end, initial_delay)
     else
-      -- Send immediately for debounced processing (Claude already connected)
+      -- Send immediately for debounced processing (OpenCode already connected)
       send_mention_sequential(1)
     end
   end
 end
 
----Show terminal if Claude is connected and it's not already visible
+---Show terminal if OpenCode is connected and it's not already visible
 ---@return boolean success Whether terminal was shown or was already visible
 function M._ensure_terminal_visible_if_connected()
-  if not M.is_claude_connected() then
+  if not M.is_opencode_connected() then
     return false
   end
 
@@ -372,8 +372,8 @@ end
 
 ---Send @ mention to OpenCode, handling connection state automatically
 ---@param file_path string The file path to send
----@param start_line number|nil Start line (0-indexed for Claude)
----@param end_line number|nil End line (0-indexed for Claude)
+---@param start_line number|nil Start line (0-indexed for OpenCode)
+---@param end_line number|nil End line (0-indexed for OpenCode)
 ---@param context string|nil Context for logging
 ---@return boolean success Whether the operation was successful
 ---@return string|nil error Error message if failed
@@ -390,8 +390,8 @@ function M.send_at_mention(file_path, start_line, end_line, context)
   end
 
   -- Check if OpenCode is connected
-  if M.is_claude_connected() then
-    -- Claude is connected, send immediately and ensure terminal is visible
+  if M.is_opencode_connected() then
+    -- OpenCode is connected, send immediately and ensure terminal is visible
     local success, error_msg = M._broadcast_at_mention(file_path, start_line, end_line)
     if success then
       local terminal = require("opencode.terminal")
@@ -404,7 +404,7 @@ function M.send_at_mention(file_path, start_line, end_line, context)
     end
     return success, error_msg
   else
-    -- Claude not connected, queue the mention and launch terminal
+    -- OpenCode not connected, queue the mention and launch terminal
     queue_mention(file_path, start_line, end_line)
 
     -- Launch terminal with OpenCode
@@ -678,8 +678,8 @@ function M._create_commands()
       local function send_files_sequentially(index)
         if index > total_count then
           if show_summary then
-            local message = success_count == 1 and "Added 1 file to Claude context"
-              or string.format("Added %d files to Claude context", success_count)
+            local message = success_count == 1 and "Added 1 file to OpenCode context"
+              or string.format("Added %d files to OpenCode context", success_count)
             if total_count > success_count then
               message = message .. string.format(" (%d failed)", total_count - success_count)
             end
@@ -713,8 +713,8 @@ function M._create_commands()
           end, delay)
         else
           if show_summary then
-            local message = success_count == 1 and "Added 1 file to Claude context"
-              or string.format("Added %d files to Claude context", success_count)
+            local message = success_count == 1 and "Added 1 file to OpenCode context"
+              or string.format("Added %d files to OpenCode context", success_count)
             if total_count > success_count then
               message = message .. string.format(" (%d failed)", total_count - success_count)
             end
@@ -746,8 +746,8 @@ function M._create_commands()
       end
 
       if show_summary and success_count > 0 then
-        local message = success_count == 1 and "Added 1 file to Claude context"
-          or string.format("Added %d files to Claude context", success_count)
+        local message = success_count == 1 and "Added 1 file to OpenCode context"
+          or string.format("Added %d files to OpenCode context", success_count)
         if total_count > success_count then
           message = message .. string.format(" (%d failed)", total_count - success_count)
         end
@@ -877,8 +877,8 @@ function M._create_commands()
           show_summary = false,
         })
         if success_count > 0 then
-          local message = success_count == 1 and "Added 1 file to Claude context from visual selection"
-            or string.format("Added %d files to Claude context from visual selection", success_count)
+          local message = success_count == 1 and "Added 1 file to OpenCode context from visual selection"
+            or string.format("Added %d files to OpenCode context from visual selection", success_count)
           logger.debug("command", message)
         end
         return
@@ -946,11 +946,11 @@ function M._create_commands()
     if success_count == 0 then
       logger.error("command", "OpenCodeTreeAdd: Failed to add any files")
     elseif success_count < total_count then
-      local message = string.format("Added %d/%d files to Claude context", success_count, total_count)
+      local message = string.format("Added %d/%d files to OpenCode context", success_count, total_count)
       logger.debug("command", message)
     else
-      local message = success_count == 1 and "Added 1 file to Claude context"
-        or string.format("Added %d files to Claude context", success_count)
+      local message = success_count == 1 and "Added 1 file to OpenCode context"
+        or string.format("Added %d files to OpenCode context", success_count)
       logger.debug("command", message)
     end
   end
@@ -991,8 +991,8 @@ function M._create_commands()
     end
 
     if success_count > 0 then
-      local message = success_count == 1 and "Added 1 file to Claude context from visual selection"
-        or string.format("Added %d files to Claude context from visual selection", success_count)
+      local message = success_count == 1 and "Added 1 file to OpenCode context from visual selection"
+        or string.format("Added %d files to OpenCode context from visual selection", success_count)
       logger.debug("command", message)
 
       if success_count < total_count then
@@ -1289,8 +1289,8 @@ function M._add_paths_to_claude(file_paths, options)
     local function send_batch(start_index)
       if start_index > total_count then
         if show_summary then
-          local message = success_count == 1 and "Added 1 file to Claude context"
-            or string.format("Added %d files to Claude context", success_count)
+          local message = success_count == 1 and "Added 1 file to OpenCode context"
+            or string.format("Added %d files to OpenCode context", success_count)
           if total_count > success_count then
             message = message .. string.format(" (%d failed)", total_count - success_count)
           end
@@ -1342,8 +1342,8 @@ function M._add_paths_to_claude(file_paths, options)
         end, delay)
       else
         if show_summary then
-          local message = success_count == 1 and "Added 1 file to Claude context"
-            or string.format("Added %d files to Claude context", success_count)
+          local message = success_count == 1 and "Added 1 file to OpenCode context"
+            or string.format("Added %d files to OpenCode context", success_count)
           if total_count > success_count then
             message = message .. string.format(" (%d failed)", total_count - success_count)
           end
@@ -1384,8 +1384,8 @@ function M._add_paths_to_claude(file_paths, options)
     end
 
     if show_summary then
-      local message = success_count == 1 and "Added 1 file to Claude context"
-        or string.format("Added %d files to Claude context", success_count)
+      local message = success_count == 1 and "Added 1 file to OpenCode context"
+        or string.format("Added %d files to OpenCode context", success_count)
       if total_count > success_count then
         message = message .. string.format(" (%d failed)", total_count - success_count)
       end

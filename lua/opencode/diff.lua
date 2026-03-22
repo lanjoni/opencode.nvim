@@ -252,7 +252,7 @@ local function display_terminal_in_new_tab()
   local split_side = terminal_config.split_side or "right"
   local split_width = terminal_config.split_width_percentage or 0.30
 
-  -- Optionally hide the Claude terminal in the new tab for more review space
+  -- Optionally hide the OpenCode terminal in the new tab for more review space
   local hide_in_new_tab = false
   if config and config.diff_opts and type(config.diff_opts.hide_terminal_in_new_tab) == "boolean" then
     hide_in_new_tab = config.diff_opts.hide_terminal_in_new_tab
@@ -1027,7 +1027,7 @@ function M._cleanup_diff_state(tab_name, reason)
       end
     end
 
-    -- Optionally ensure the Claude terminal remains visible in the original tab
+    -- Optionally ensure the OpenCode terminal remains visible in the original tab
     local terminal_ok, terminal_module = pcall(require, "opencode.terminal")
     if terminal_ok and diff_data.had_terminal_in_original then
       pcall(terminal_module.ensure_visible)
@@ -1402,7 +1402,7 @@ function M.close_diff_by_tab_name(tab_name)
   if diff_data.status == "saved" then
     -- OpenCode CLI has written the file, reload any open buffers
     if diff_data.old_file_path then
-      -- Add a small delay to ensure Claude CLI has finished writing the file
+      -- Add a small delay to ensure OpenCode CLI has finished writing the file
       vim.defer_fn(function()
         M.reload_file_buffers_manual(diff_data.old_file_path, diff_data.original_cursor_pos)
       end, 100) -- 100ms delay

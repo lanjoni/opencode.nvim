@@ -1,5 +1,5 @@
 {
-  description = "Claude Code Neovim plugin development environment";
+  description = "OpenCode Neovim plugin development environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -12,10 +12,6 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-
-          config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
-            "claude-code"
-          ];
         };
 
         treefmt = treefmt-nix.lib.evalModule pkgs {
@@ -56,10 +52,28 @@
           websocat
           jq
           fzf
-          # claude-code
         ];
+
+        # The opencode.nvim plugin package
+        opencode-nvim = pkgs.vimUtils.buildVimPlugin {
+          pname = "opencode.nvim";
+          version = "0.2.0";
+          src = self;
+          meta = with pkgs.lib; {
+            description = "OpenCode integration for Neovim";
+            homepage = "https://github.com/lanjoni/opencode.nvim";
+            license = licenses.mit;
+            maintainers = [ ];
+          };
+        };
       in
       {
+        # Package for installing the plugin
+        packages = {
+          opencode-nvim = opencode-nvim;
+          default = opencode-nvim;
+        };
+
         # Format the source tree
         formatter = treefmt.config.build.wrapper;
 
