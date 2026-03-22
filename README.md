@@ -8,7 +8,7 @@
 
 > 🎯 **TL;DR:** When Anthropic released OpenCode with VS Code and JetBrains support, I reverse-engineered their extension and built this Neovim plugin. This plugin implements the same WebSocket-based MCP protocol, giving Neovim users the same AI-powered coding experience.
 
-<https://github.com/user-attachments/assets/9c310fb5-5a23-482b-bedc-e21ae457a82d>
+<https://github.com/user-attachments/assets/c069c25a-5dba-4737-b4c9-b0962c804f40>
 
 ## What Makes This Special
 
