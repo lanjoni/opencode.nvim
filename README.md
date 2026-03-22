@@ -16,7 +16,7 @@ the original implementation has a reverse-engineered version of claude code plug
 
 - **pure lua, zero dependencies** — built entirely with `vim.loop` and neovim built-ins
 - **built with AI** — used opencode to make this implementation
-- **proper file handling** - as opencode still doesn't support websocket connection (that's an issue and this feature is in development right now) all handling here doesn't have the smoothiest experience, BUT it seems better integrated for simple usage (as I prefer to use a vanilla setup for my coding experience), making correctly file handling and interacting better with terminal
+- **proper file handling** - as opencode still doesn't support websocket connection (that's an issue and this feature is in development right now) all handling here doesn't have the smoothiest experience, but it seems better integrated for simple usage (as I prefer to use a vanilla setup for my coding experience), making correctly file handling and interacting better with terminal
 
 ## installation
 
@@ -76,9 +76,9 @@ configure the plugin with the direct path:
 }
 ```
 
-> **Note**: If OpenCode was installed globally via npm, you can use the default configuration without specifying `terminal_cmd`.
+> **Note**: if opencode was installed globally via npm, you can use the default configuration without specifying `terminal_cmd`.
 
-## Quick Demo
+## quick demo
 
 ```vim
 " Launch OpenCode in a split
@@ -126,7 +126,7 @@ you can edit opencode's suggestions before accepting them.
 
 ## how it works
 
-This plugin integrates with OpenCode using terminal-based communication. When you launch OpenCode, the plugin opens it in a dedicated terminal and communicates via stdin injection.
+this plugin integrates with opencode using terminal-based communication. when you launch opencode, the plugin opens it in a dedicated terminal and communicates via stdin injection.
 
 ### current implementation (terminal-based)
 
@@ -149,16 +149,16 @@ the current terminal-based approach provides immediate functionality while we aw
 
 built with pure lua and zero external dependencies:
 
-- **Terminal Integration** - Direct terminal control with `jobstart()` and stdin injection
-- **Autocomplete Simulation** - Triggers OpenCode's TUI autocomplete via keystrokes
-- **Port Management** - HTTP API port tracking for future enhancements
-- **Selection Tracking** - Real-time context updates
-- **Native Diff Support** - Seamless file comparison
-- **WIP: WebSocket Server** - RFC 6455 compliant implementation (for future OpenCode API)
+- **terminal integration** - Direct terminal control with `jobstart()` and stdin injection
+- **autocomplete simulation** - Triggers opencode's TUI autocomplete via keystrokes
+- **port management** - HTTP API port tracking for future enhancements
+- **selection tracking** - Real-time context updates
+- **native diff support** - Seamless file comparison
+- **WIP: websocket server** - RFC 6455 compliant implementation (for future opencode API)
 
-For deep technical details, see [ARCHITECTURE.md](./ARCHITECTURE.md).
+for deep technical details, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
-## Advanced Configuration
+## advanced configuration
 
 ```lua
 {
@@ -174,7 +174,7 @@ For deep technical details, see [ARCHITECTURE.md](./ARCHITECTURE.md).
                         -- For native binary: use output from 'which opencode'
 
     -- Send/Focus Behavior
-    -- When true, successful sends will focus the OpenCode terminal if already connected
+    -- When true, successful sends will focus the opencode terminal if already connected
     focus_after_send = false,
 
     -- Selection Tracking
@@ -203,7 +203,7 @@ For deep technical details, see [ARCHITECTURE.md](./ARCHITECTURE.md).
     diff_opts = {
       layout = "vertical", -- "vertical" or "horizontal"
       open_in_new_tab = false,
-      keep_terminal_focus = false, -- If true, moves focus back to terminal after diff opens
+      keep_terminal_focus = false, -- if true, moves focus back to terminal after diff opens
       hide_terminal_in_new_tab = false,
       -- on_new_file_reject = "keep_empty", -- "keep_empty" or "close_window"
 
@@ -218,15 +218,15 @@ For deep technical details, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 }
 ```
 
-### Working Directory Control
+### working directory control
 
-You can fix the OpenCode terminal's working directory regardless of `autochdir` and buffer-local cwd changes. Options (precedence order):
+you can fix the opencode terminal's working directory regardless of `autochdir` and buffer-local cwd changes. Options (precedence order):
 
 - `cwd_provider(ctx)`: function that returns a directory string. Receives `{ file, file_dir, cwd }`.
 - `cwd`: static path to use as working directory.
 - `git_repo_cwd = true`: resolves git root from the current file directory (or cwd if no file).
 
-Examples:
+examples:
 
 ```lua
 require("opencode").setup({
@@ -251,9 +251,9 @@ require("opencode").setup({
 })
 ```
 
-## Floating Window Configuration
+## floating window configuration
 
-The `snacks_win_opts` configuration allows you to create floating OpenCode terminals:
+the `snacks_win_opts` configuration allows you to create floating opencode terminals:
 
 ```lua
 {
@@ -277,18 +277,18 @@ The `snacks_win_opts` configuration allows you to create floating OpenCode termi
 }
 ```
 
-For complete configuration options, see:
+for complete configuration options, see:
 
-- [Snacks.nvim Terminal Documentation](https://github.com/folke/snacks.nvim/blob/main/docs/terminal.md)
-- [Snacks.nvim Window Documentation](https://github.com/folke/snacks.nvim/blob/main/docs/win.md)
+- [snacks.nvim terminal documentation](https://github.com/folke/snacks.nvim/blob/main/docs/terminal.md)
+- [snacks.nvim window documentation](https://github.com/folke/snacks.nvim/blob/main/docs/win.md)
 
-## Terminal Providers
+## terminal providers
 
-### None (No-Op) Provider
+### none (No-Op) provider
 
-Run OpenCode without any terminal management inside Neovim. This is useful for advanced setups where you manage the CLI externally (tmux, kitty, separate terminal windows) while still using the WebSocket server and tools.
+run opencode without any terminal management inside Neovim. this is useful for advanced setups where you manage the CLI externally (tmux, kitty, separate terminal windows) while still using the WebSocket server and tools.
 
-You have to take care of launching CC and connecting it to the IDE yourself. (e.g. `opencode --ide` or launching opencode and then selecting the IDE using the `/ide` command)
+you have to take care of launching CC and connecting it to the IDE yourself. (e.g. `opencode --ide` or launching opencode and then selecting the IDE using the `/ide` command)
 
 ```lua
 {
@@ -301,14 +301,14 @@ You have to take care of launching CC and connecting it to the IDE yourself. (e.
 }
 ```
 
-Notes:
+notes:
 
-- No windows/buffers are created. `:OpenCode` and related commands will not open anything.
-- The WebSocket server still starts and broadcasts work as usual. Launch the OpenCode CLI externally when desired.
+- no windows/buffers are created. `:OpenCode` and related commands will not open anything.
+- the websocket server still starts and broadcasts work as usual. launch the opencode CLI externally when desired.
 
-### External Terminal Provider
+### external terminal provider
 
-Run OpenCode in a separate terminal application outside of Neovim:
+run opencode in a separate terminal application outside of Neovim:
 
 ```lua
 -- Using a string template (simple)
@@ -346,7 +346,7 @@ Run OpenCode in a separate terminal application outside of Neovim:
 }
 ```
 
-### Custom Terminal Providers
+### custom terminal providers
 
 You can create custom terminal providers by passing a table with the required functions instead of a string provider name:
 
@@ -400,9 +400,9 @@ require("opencode").setup({
 })
 ```
 
-### Custom Provider Example
+### custom provider example
 
-Here's a complete example using a hypothetical `my_terminal` plugin:
+here's a complete example using a hypothetical `my_terminal` plugin:
 
 ```lua
 local my_terminal_provider = {
@@ -458,13 +458,13 @@ require("opencode").setup({
 })
 ```
 
-The custom provider will automatically fall back to the native provider if validation fails or `is_available()` returns false.
+the custom provider will automatically fall back to the native provider if validation fails or `is_available()` returns false.
 
-Note: If your command or working directory may contain spaces or special characters, prefer returning a table of args from a function (e.g., `{ "alacritty", "--working-directory", cwd, "-e", "opencode", "--help" }`) to avoid shell-quoting issues.
+note: if your command or working directory may contain spaces or special characters, prefer returning a table of args from a function (e.g., `{ "alacritty", "--working-directory", cwd, "-e", "opencode", "--help" }`) to avoid shell-quoting issues.
 
-## Auto-Save Plugin Issues
+## auto-save plugin issues
 
-Using auto-save plugins can cause diff windows opened by OpenCode to immediately accept without waiting for input. You can avoid this using a custom condition:
+using auto-save plugins can cause diff windows opened by opencode to immediately accept without waiting for input. you can avoid this using a custom condition:
 
 <details>
 <summary>Pocco81/auto-save.nvim</summary>
@@ -543,23 +543,23 @@ opts = {
 
 </details>
 
-## Troubleshooting
+## troubleshooting
 
-- **OpenCode not connecting?** Check `:OpenCodeStatus` and verify lock file exists in `~/.opencode/ide/`
-- **Need debug logs?** Set `log_level = "debug"` in opts
-- **Terminal issues?** Try `provider = "native"` if using snacks.nvim
-- **Local installation not working?** If you used `opencode install`, set `terminal_cmd = "~/.opencode/local/opencode"` in your config. Check `which opencode` vs `ls ~/.opencode/local/opencode` to verify your installation type.
-- **Native binary installation not working?** If you used the alpha native binary installer, run `opencode doctor` to verify installation health and use `which opencode` to find the binary path. Set `terminal_cmd = "/path/to/opencode"` with the detected path in your config.
+- **opencode not connecting?** check `:OpenCodeStatus` and verify lock file exists in `~/.opencode/ide/`
+- **need debug logs?** set `log_level = "debug"` in opts
+- **terminal issues?** try `provider = "native"` if using snacks.nvim
+- **local installation not working?** if you used `opencode install`, set `terminal_cmd = "~/.opencode/local/opencode"` in your config. check `which opencode` vs `ls ~/.opencode/local/opencode` to verify your installation type.
+- **native binary installation not working?** if you used the alpha native binary installer, run `opencode doctor` to verify installation health and use `which opencode` to find the binary path. set `terminal_cmd = "/path/to/opencode"` with the detected path in your config.
 
-## Contributing
+## contributing
 
-Run tests with `make test` or `LUA_PATH="./lua/?.lua;./lua/?/init.lua;./?.lua;$LUA_PATH" busted tests/`.
+run tests with `make test` or `LUA_PATH="./lua/?.lua;./lua/?/init.lua;./?.lua;$LUA_PATH" busted tests/`.
 
-## License
+## license
 
 [MIT](LICENSE)
 
-## Acknowledgements
+## acknowledgements
 
-- [OpenCode CLI](https://opencode.ai) by Anthropic
-- Built with assistance from AI (how meta!)
+- [opencode](https://opencode.ai) by [anomaly](https://anoma.ly/)
+- built with opencode and [kimi k2.5](https://www.kimi.com/ai-models/kimi-k2-5)
