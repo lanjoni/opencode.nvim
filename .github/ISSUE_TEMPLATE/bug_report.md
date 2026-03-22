@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 
 Steps to reproduce the behavior:
 
-1. Start Claude Code integration with '...'
+1. Start Open Code integration with '...'
 2. Run command '....'
 3. See error
 
@@ -25,7 +25,7 @@ A clear and concise description of what you expected to happen.
 ## Environment
 
 - Neovim version: [e.g. 0.9.2]
-- Claude Code CLI version: [e.g. 1.0.0]
+- Open Code CLI version: [e.g. 1.0.0]
 - OS: [e.g. macOS 14.1]
 - Plugin version: [e.g. 0.1.0]
 

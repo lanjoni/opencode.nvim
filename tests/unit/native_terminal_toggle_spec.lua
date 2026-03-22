@@ -1,4 +1,4 @@
-describe("claudecode.terminal.native toggle behavior", function()
+describe("opencode.terminal.native toggle behavior", function()
   local native_provider
   local mock_vim
   local logger_spy
@@ -8,8 +8,8 @@ describe("claudecode.terminal.native toggle behavior", function()
     package.path = "./lua/?.lua;" .. package.path
 
     -- Clean up any loaded modules
-    package.loaded["claudecode.terminal.native"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.terminal.native"] = nil
+    package.loaded["opencode.logger"] = nil
 
     -- Mock state for more realistic testing
     local mock_state = {
@@ -105,6 +105,14 @@ describe("claudecode.terminal.native toggle behavior", function()
           -- Mock window-specific function execution
           return fn()
         end,
+        nvim_create_augroup = function(name, opts)
+          -- Mock creating an augroup
+          return 1
+        end,
+        nvim_create_autocmd = function(event, opts)
+          -- Mock creating an autocmd
+          return 1
+        end,
       },
       cmd = function(command)
         -- Handle vsplit and other commands
@@ -137,7 +145,7 @@ describe("claudecode.terminal.native toggle behavior", function()
           local bufnr = mock_state.next_bufnr
           mock_state.next_bufnr = mock_state.next_bufnr + 1
           mock_state.buffers[bufnr] = {
-            name = "term://claude",
+            name = "term://opencode",
             options = { buftype = "terminal", bufhidden = "wipe" },
             jobid = jobid,
             on_exit = opts.on_exit,
@@ -150,9 +158,28 @@ describe("claudecode.terminal.native toggle behavior", function()
 
           return jobid
         end,
+        has = function(feature)
+          -- Mock has() function for feature detection
+          if feature == "unix" then
+            return 1 -- Pretend we're on Unix
+          end
+          return 0
+        end,
+        jobstop = function(jobid)
+          -- Mock jobstop
+          return 1
+        end,
+        system = function(cmd)
+          -- Mock system() calls
+          return ""
+        end,
       },
       schedule = function(callback)
         callback() -- Execute immediately in tests
+      end,
+      wait = function(ms, callback)
+        -- Mock wait - just return immediately
+        return true
       end,
       bo = setmetatable({}, {
         __index = function(_, bufnr)
@@ -184,10 +211,10 @@ describe("claudecode.terminal.native toggle behavior", function()
         -- Track error calls
       end,
     }
-    package.loaded["claudecode.logger"] = logger_spy
+    package.loaded["opencode.logger"] = logger_spy
 
     -- Load the native provider
-    native_provider = require("claudecode.terminal.native")
+    native_provider = require("opencode.terminal.native")
     native_provider.setup({})
 
     -- Helper function to get mock state for verification
@@ -198,13 +225,13 @@ describe("claudecode.terminal.native toggle behavior", function()
 
   after_each(function()
     _G.vim = nil
-    package.loaded["claudecode.terminal.native"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.terminal.native"] = nil
+    package.loaded["opencode.logger"] = nil
   end)
 
   describe("toggle with no existing terminal", function()
     it("should create a new terminal when none exists", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -224,7 +251,7 @@ describe("claudecode.terminal.native toggle behavior", function()
 
   describe("toggle with existing hidden terminal", function()
     it("should show hidden terminal instead of creating new one", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -270,7 +297,7 @@ describe("claudecode.terminal.native toggle behavior", function()
 
   describe("toggle with visible terminal", function()
     it("should hide terminal when toggling from inside it and set bufhidden=hide", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -311,7 +338,7 @@ describe("claudecode.terminal.native toggle behavior", function()
     end)
 
     it("should focus terminal when focus toggling from outside it", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -354,7 +381,7 @@ describe("claudecode.terminal.native toggle behavior", function()
 
   describe("close vs toggle behavior", function()
     it("should preserve process on toggle but kill on close", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -389,7 +416,7 @@ describe("claudecode.terminal.native toggle behavior", function()
 
   describe("simple_toggle behavior", function()
     it("should always hide terminal when visible, regardless of focus", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -416,7 +443,7 @@ describe("claudecode.terminal.native toggle behavior", function()
     end)
 
     it("should always show terminal when not visible", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -431,7 +458,7 @@ describe("claudecode.terminal.native toggle behavior", function()
     end)
 
     it("should show hidden terminal when toggled", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -461,7 +488,7 @@ describe("claudecode.terminal.native toggle behavior", function()
 
   describe("focus_toggle behavior", function()
     it("should focus terminal when visible but not focused", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 
@@ -500,7 +527,7 @@ describe("claudecode.terminal.native toggle behavior", function()
     end)
 
     it("should hide terminal when focused and toggle called", function()
-      local cmd_string = "claude"
+      local cmd_string = "opencode"
       local env_table = { TEST = "value" }
       local config = { split_side = "right", split_width_percentage = 0.3 }
 

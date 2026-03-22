@@ -315,22 +315,22 @@ You can fix the OpenCode terminal's working directory regardless of `autochdir` 
 Examples:
 
 ```lua
-require("claudecode").setup({
+require("opencode").setup({
   -- Top-level aliases are supported and forwarded to terminal config
   git_repo_cwd = true,
 })
 
-require("claudecode").setup({
+require("opencode").setup({
   terminal = {
     cwd = vim.fn.expand("~/projects/my-app"),
   },
 })
 
-require("claudecode").setup({
+require("opencode").setup({
   terminal = {
     cwd_provider = function(ctx)
       -- Prefer repo root; fallback to file's directory
-      local cwd = require("claudecode.cwd").git_root(ctx.file_dir or ctx.cwd) or ctx.file_dir or ctx.cwd
+      local cwd = require("opencode.cwd").git_root(ctx.file_dir or ctx.cwd) or ctx.file_dir or ctx.cwd
       return cwd
     end,
   },
@@ -412,7 +412,7 @@ return {
 <summary>Centered Floating Window with Custom Styling</summary>
 
 ```lua
-require("claudecode").setup({
+require("opencode").setup({
   terminal = {
     snacks_win_opts = {
       position = "float",
@@ -570,7 +570,7 @@ Run OpenCode in a separate terminal application outside of Neovim:
 You can create custom terminal providers by passing a table with the required functions instead of a string provider name:
 
 ```lua
-require("claudecode").setup({
+require("opencode").setup({
   terminal = {
     provider = {
       -- Required functions
@@ -670,7 +670,7 @@ local my_terminal_provider = {
   end,
 }
 
-require("claudecode").setup({
+require("opencode").setup({
   terminal = {
     provider = my_terminal_provider,
   },
@@ -683,11 +683,11 @@ Note: If your command or working directory may contain spaces or special charact
 
 ## Community Extensions
 
-The following are third-party community extensions that complement claudecode.nvim. **These extensions are not affiliated with Coder and are maintained independently by community members.** We do not ensure that these extensions work correctly or provide support for them.
+The following are third-party community extensions that complement opencode.nvim. **These extensions are not affiliated with Coder and are maintained independently by community members.** We do not ensure that these extensions work correctly or provide support for them.
 
 ### 🔍 [claude-fzf.nvim](https://github.com/pittcat/claude-fzf.nvim)
 
-Integrates fzf-lua's file selection with claudecode.nvim's context management:
+Integrates fzf-lua's file selection with opencode.nvim's context management:
 
 - Batch file selection with fzf-lua multi-select
 - Smart search integration with grep → OpenCode
@@ -728,9 +728,9 @@ opts = {
     end
 
     -- Exclude by buffer variables (claudecode sets these)
-    if vim.b[buf].claudecode_diff_tab_name or
-       vim.b[buf].claudecode_diff_new_win or
-       vim.b[buf].claudecode_diff_target_win then
+    if vim.b[buf].opencode_diff_tab_name or
+       vim.b[buf].opencode_diff_new_win or
+       vim.b[buf].opencode_diff_target_win then
       return false
     end
 
@@ -761,9 +761,9 @@ opts = {
 
     -- Exclude by buffer variables (claudecode sets these)
     if
-      vim.b[buf].claudecode_diff_tab_name
-      or vim.b[buf].claudecode_diff_new_win
-      or vim.b[buf].claudecode_diff_target_win
+      vim.b[buf].opencode_diff_tab_name
+      or vim.b[buf].opencode_diff_new_win
+      or vim.b[buf].opencode_diff_target_win
     then
       return false
     end

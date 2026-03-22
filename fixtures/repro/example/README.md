@@ -1,4 +1,4 @@
-# claudecode.nvim repro workspace
+# opencode.nvim repro workspace
 
 This directory is copied into a temp workspace when you run `repro`.
 
@@ -13,7 +13,7 @@ repro
 
 That will:
 
-- create `/tmp/claudecode.nvim-repro` (reset on every run; use `repro --keep` to reuse)
+- create `/tmp/opencode.nvim-repro` (reset on every run; use `repro --keep` to reuse)
 - open Neovim with the **minimal** `fixtures/repro` config
 - open `a.txt` so your current window is non-empty
 

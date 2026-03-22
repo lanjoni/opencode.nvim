@@ -19,5 +19,5 @@ alias repro="$BIN_DIR/repro"
 
 echo "Neovim configuration aliases loaded!"
 echo "Use 'vv <config>' or 'vve <config>' to test configurations"
-echo "Use 'repro' for a minimal claudecode.nvim repro environment"
+echo "Use 'repro' for a minimal opencode.nvim repro environment"
 echo "Use 'list-configs' to see available options"

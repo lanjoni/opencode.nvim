@@ -59,12 +59,12 @@ The `fixtures/` directory contains test Neovim configurations for verifying plug
 
 ### Core Components
 
-1. **WebSocket Server** (`lua/claudecode/server/`) - Pure Neovim implementation using vim.loop, RFC 6455 compliant
-2. **MCP Tool System** (`lua/claudecode/tools/`) - Implements tools that Claude can execute (openFile, getCurrentSelection, etc.)
-3. **Lock File System** (`lua/claudecode/lockfile.lua`) - Creates discovery files for Claude CLI at `~/.claude/ide/`
-4. **Selection Tracking** (`lua/claudecode/selection.lua`) - Monitors text selections and sends updates to Claude
-5. **Diff Integration** (`lua/claudecode/diff.lua`) - Native Neovim diff support for Claude's file comparisons
-6. **Terminal Integration** (`lua/claudecode/terminal.lua`) - Manages Claude CLI terminal sessions with support for internal Neovim terminals and external terminal applications
+1. **WebSocket Server** (`lua/opencode/server/`) - Pure Neovim implementation using vim.loop, RFC 6455 compliant
+2. **MCP Tool System** (`lua/opencode/tools/`) - Implements tools that Claude can execute (openFile, getCurrentSelection, etc.)
+3. **Lock File System** (`lua/opencode/lockfile.lua`) - Creates discovery files for Claude CLI at `~/.opencode/ide/`
+4. **Selection Tracking** (`lua/opencode/selection.lua`) - Monitors text selections and sends updates to Claude
+5. **Diff Integration** (`lua/opencode/diff.lua`) - Native Neovim diff support for Claude's file comparisons
+6. **Terminal Integration** (`lua/opencode/terminal.lua`) - Manages Claude CLI terminal sessions with support for internal Neovim terminals and external terminal applications
 
 ### WebSocket Server Implementation
 
@@ -80,7 +80,7 @@ The WebSocket server implements secure authentication using:
 
 - **UUID v4 Tokens**: Generated per session with enhanced entropy
 - **Header-based Auth**: Uses `x-claude-code-ide-authorization` header
-- **Lock File Discovery**: Tokens stored in `~/.claude/ide/[port].lock` for Claude CLI
+- **Lock File Discovery**: Tokens stored in `~/.opencode/ide/[port].lock` for Claude CLI
 - **MCP Compliance**: Follows official OpenCode IDE authentication protocol
 
 ### MCP Tools Architecture (✅ FULLY COMPLIANT)
@@ -130,9 +130,9 @@ opts = {
 
 ### Key File Locations
 
-- `lua/claudecode/init.lua` - Main entry point and setup
-- `lua/claudecode/config.lua` - Configuration management
-- `plugin/claudecode.lua` - Plugin loader with version checks
+- `lua/opencode/init.lua` - Main entry point and setup
+- `lua/opencode/config.lua` - Configuration management
+- `plugin/opencode.lua` - Plugin loader with version checks
 - `tests/` - Comprehensive test suite with unit, component, and integration tests
 
 ## MCP Protocol Compliance
@@ -252,7 +252,7 @@ cd scripts/
 **Authentication Flow Testing**:
 
 1. Start the plugin: `:ClaudeCodeStart`
-2. Check lock file contains `authToken`: `cat ~/.claude/ide/*.lock | jq .authToken`
+2. Check lock file contains `authToken`: `cat ~/.opencode/ide/*.lock | jq .authToken`
 3. Test WebSocket connection with auth: Use test scripts in `scripts/` directory
 4. Verify authentication in logs: Set `log_level = "debug"` in config
 
@@ -266,7 +266,7 @@ websocat ws://localhost:PORT --header "x-claude-code-ide-authorization: invalid-
 websocat ws://localhost:PORT
 
 # Test valid auth token (should succeed)
-websocat ws://localhost:PORT --header "x-claude-code-ide-authorization: $(cat ~/.claude/ide/*.lock | jq -r .authToken)"
+websocat ws://localhost:PORT --header "x-claude-code-ide-authorization: $(cat ~/.opencode/ide/*.lock | jq -r .authToken)"
 ```
 
 ### Authentication Logging
@@ -274,7 +274,7 @@ websocat ws://localhost:PORT --header "x-claude-code-ide-authorization: $(cat ~/
 Enable detailed authentication logging by setting:
 
 ```lua
-require("claudecode").setup({
+require("opencode").setup({
   log_level = "debug",  -- Shows auth token generation, validation, and failures
   diff_opts = {
     keep_terminal_focus = true,  -- If true, moves focus back to terminal after diff opens
@@ -298,7 +298,7 @@ The `diff_opts` configuration allows you to customize diff behavior:
 **Example use case**: If you frequently use `<CR>` or arrow keys in the OpenCode terminal to accept/reject diffs, enable this option to prevent focus from moving to the diff buffer where `<CR>` might trigger unintended actions.
 
 ```lua
-require("claudecode").setup({
+require("opencode").setup({
   diff_opts = {
     layout = "vertical", -- "vertical" or "horizontal"
     keep_terminal_focus = true, -- If true, moves focus back to terminal after diff opens
@@ -338,7 +338,7 @@ Log levels for authentication events:
 
 - WebSocket server only accepts local connections (127.0.0.1) for security
 - Authentication tokens are UUID v4 with enhanced entropy
-- Lock files created at `~/.claude/ide/[port].lock` for Claude CLI discovery
+- Lock files created at `~/.opencode/ide/[port].lock` for Claude CLI discovery
 - All authentication events are logged for security auditing
 
 ### Performance Optimizations
@@ -359,7 +359,7 @@ Log levels for authentication events:
 
 When updating the version number for a new release, you must update **ALL** of these files:
 
-1. **`lua/claudecode/init.lua`** - Main version table:
+1. **`lua/opencode/init.lua`** - Main version table:
 
    ```lua
    M.version = {
@@ -420,7 +420,7 @@ rg "0\.1\.0" .  # Should only show CHANGELOG.md historical entries
 
 **Adding New Integrations** (file explorers, terminals, etc.):
 
-1. **Implement Integration**: Add support in relevant modules (e.g., `lua/claudecode/tools/`)
+1. **Implement Integration**: Add support in relevant modules (e.g., `lua/opencode/tools/`)
 2. **Create Fixture Configuration**: **REQUIRED** - Add a complete Neovim config in `fixtures/[integration-name]/`
 3. **Test Integration**: Use fixture to verify functionality with `vv [integration-name]`
 4. **Update Documentation**: Add integration to fixtures list and relevant tool documentation
@@ -429,7 +429,7 @@ rg "0\.1\.0" .  # Should only show CHANGELOG.md historical entries
 **Fixture Requirements**:
 
 - Complete Neovim configuration with plugin dependencies
-- Include `dev-claudecode.lua` with development keybindings
+- Include `dev-opencode.lua` with development keybindings
 - Test all relevant opencode.nvim features with the integration
 - Document any integration-specific behaviors or limitations
 
@@ -437,7 +437,7 @@ rg "0\.1\.0" .  # Should only show CHANGELOG.md historical entries
 
 **Adding New Tools**:
 
-1. **Study Existing Patterns**: Review `lua/claudecode/tools/` for consistent structure
+1. **Study Existing Patterns**: Review `lua/opencode/tools/` for consistent structure
 2. **Implement Handler**: Return MCP format: `{content: [{type: "text", text: JSON}]}`
 3. **Add JSON Schema**: Define parameters and expose via MCP (if needed)
 4. **Create Tests**: Both unit tests and integration tests required
@@ -505,14 +505,14 @@ busted tests/unit/specific_test.lua
 
 - Tools with `schema = nil` are internal-only
 - Tools with schema are exposed via MCP
-- Check `lua/claudecode/tools/init.lua` for registration patterns
+- Check `lua/opencode/tools/init.lua` for registration patterns
 
 **Authentication Testing**:
 
 ```bash
 # Verify auth token generation
-cat ~/.claude/ide/*.lock | jq .authToken
+cat ~/.opencode/ide/*.lock | jq .authToken
 
 # Test WebSocket connection
-websocat ws://localhost:PORT --header "x-claude-code-ide-authorization: $(cat ~/.claude/ide/*.lock | jq -r .authToken)"
+websocat ws://localhost:PORT --header "x-claude-code-ide-authorization: $(cat ~/.opencode/ide/*.lock | jq -r .authToken)"
 ```

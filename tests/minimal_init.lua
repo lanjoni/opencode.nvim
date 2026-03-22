@@ -44,7 +44,7 @@ for _, plugin in pairs(disabled_built_ins) do
   vim.g["loaded_" .. plugin] = 1
 end
 
--- Check for claudecode-specific tests by examining command line or environment
+-- Check for opencode-specific tests by examining command line or environment
 local should_load = false
 
 -- Method 1: Check command line arguments for specific test files
@@ -60,30 +60,30 @@ if not should_load and os.getenv("CLAUDECODE_INTEGRATION_TEST") == "true" then
   should_load = true
 end
 
-if not vim.g.loaded_claudecode and should_load then
-  require("claudecode").setup({
+if not vim.g.loaded_opencode and should_load then
+  require("opencode").setup({
     auto_start = false,
     log_level = "trace", -- More verbose for tests
   })
 end
 
 -- Global cleanup function for plenary test harness
-_G.claudecode_test_cleanup = function()
+_G.opencode_test_cleanup = function()
   -- Clear global deferred responses
   if _G.claude_deferred_responses then
     _G.claude_deferred_responses = {}
   end
 
-  -- Stop claudecode if running
-  local ok, claudecode = pcall(require, "claudecode")
-  if ok and claudecode.state and claudecode.state.server then
-    local selection_ok, selection = pcall(require, "claudecode.selection")
+  -- Stop opencode if running
+  local ok, opencode = pcall(require, "opencode")
+  if ok and opencode.state and opencode.state.server then
+    local selection_ok, selection = pcall(require, "opencode.selection")
     if selection_ok and selection.disable then
       selection.disable()
     end
 
-    if claudecode.stop then
-      claudecode.stop()
+    if opencode.stop then
+      opencode.stop()
     end
   end
 end
@@ -92,7 +92,7 @@ end
 if vim.env.PLENARY_TEST_HARNESS then
   vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
-      _G.claudecode_test_cleanup()
+      _G.opencode_test_cleanup()
     end,
   })
 end

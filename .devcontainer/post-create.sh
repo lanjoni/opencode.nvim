@@ -11,7 +11,7 @@ fi
 
 echo "✅ Nix is installed and available"
 echo ""
-echo "📦 claudecode.nvim Development Container Ready!"
+echo "📦 opencode.nvim Development Container Ready!"
 echo ""
 echo "To enter the development shell with all dependencies, run:"
 echo "  nix develop"

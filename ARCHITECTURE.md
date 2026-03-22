@@ -187,7 +187,7 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 ## Module Structure
 
 ```
-lua/claudecode/
+lua/opencode/
 ├── init.lua              # Plugin entry point
 ├── config.lua            # Configuration management
 ├── server/               # WebSocket implementation

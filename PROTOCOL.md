@@ -16,7 +16,7 @@ The extension starts a WebSocket server on a random port (10000-65535) that list
 
 ### 2. Lock File Creation
 
-The IDE writes a discovery file to `~/.claude/ide/[port].lock`:
+The IDE writes a discovery file to `~/.opencode/ide/[port].lock`:
 
 ```json
 {
@@ -513,7 +513,7 @@ local server = create_websocket_server("127.0.0.1", random_port)
 ### 2. Write the Lock File
 
 ```lua
--- ~/.claude/ide/[port].lock
+-- ~/.opencode/ide/[port].lock
 local auth_token = generate_uuid() -- Generate random UUID
 local lock_data = {
   pid = vim.fn.getpid(),

@@ -1,8 +1,8 @@
 require("tests.busted_setup")
 require("tests.mocks.vim")
 
-describe("ClaudeCodeAdd command", function()
-  local claudecode
+describe("OpenCodeAdd command", function()
+  local opencode
   local mock_server
   local mock_logger
   local saved_require = _G.require
@@ -62,25 +62,25 @@ describe("ClaudeCodeAdd command", function()
     vim.notify = spy.new(function() end)
 
     _G.require = function(mod)
-      if mod == "claudecode.logger" then
+      if mod == "opencode.logger" then
         return mock_logger
-      elseif mod == "claudecode.config" then
+      elseif mod == "opencode.config" then
         return {
           apply = function(opts)
             return opts or {}
           end,
         }
-      elseif mod == "claudecode.diff" then
+      elseif mod == "opencode.diff" then
         return {
           setup = function() end,
         }
-      elseif mod == "claudecode.server.init" then
+      elseif mod == "opencode.server.init" then
         return {
           get_status = function()
             return { running = true, client_count = 1 }
           end,
         }
-      elseif mod == "claudecode.terminal" then
+      elseif mod == "opencode.terminal" then
         return {
           setup = function() end,
           open = spy.new(function() end),
@@ -91,7 +91,7 @@ describe("ClaudeCodeAdd command", function()
           end,
           simple_toggle = spy.new(function() end),
         }
-      elseif mod == "claudecode.visual_commands" then
+      elseif mod == "opencode.visual_commands" then
         return {
           create_visual_command_wrapper = function(normal_handler, visual_handler)
             return normal_handler
@@ -107,33 +107,33 @@ describe("ClaudeCodeAdd command", function()
     setup_mocks()
 
     -- Clear package cache to ensure fresh require
-    package.loaded["claudecode"] = nil
-    package.loaded["claudecode.config"] = nil
-    package.loaded["claudecode.logger"] = nil
-    package.loaded["claudecode.diff"] = nil
-    package.loaded["claudecode.visual_commands"] = nil
-    package.loaded["claudecode.terminal"] = nil
+    package.loaded["opencode"] = nil
+    package.loaded["opencode.config"] = nil
+    package.loaded["opencode.logger"] = nil
+    package.loaded["opencode.diff"] = nil
+    package.loaded["opencode.visual_commands"] = nil
+    package.loaded["opencode.terminal"] = nil
 
-    claudecode = require("claudecode")
+    opencode = require("opencode")
 
     -- Set up the server state manually for testing
-    claudecode.state.server = mock_server
-    claudecode.state.port = 12345
+    opencode.state.server = mock_server
+    opencode.state.port = 12345
   end)
 
   after_each(function()
     _G.require = saved_require
-    package.loaded["claudecode"] = nil
+    package.loaded["opencode"] = nil
   end)
 
   describe("command registration", function()
-    it("should register ClaudeCodeAdd command during setup", function()
-      claudecode.setup({ auto_start = false })
+    it("should register OpenCodeAdd command during setup", function()
+      opencode.setup({ auto_start = false })
 
-      -- Find the ClaudeCodeAdd command registration
+      -- Find the OpenCodeAdd command registration
       local add_command_found = false
       for _, call in ipairs(vim.api.nvim_create_user_command.calls) do
-        if call.vals[1] == "ClaudeCodeAdd" then
+        if call.vals[1] == "OpenCodeAdd" then
           add_command_found = true
 
           local config = call.vals[3]
@@ -145,7 +145,7 @@ describe("ClaudeCodeAdd command", function()
         end
       end
 
-      assert.is_true(add_command_found, "ClaudeCodeAdd command was not registered")
+      assert.is_true(add_command_found, "OpenCodeAdd command was not registered")
     end)
   end)
 
@@ -153,10 +153,10 @@ describe("ClaudeCodeAdd command", function()
     local command_handler
 
     before_each(function()
-      claudecode.setup({ auto_start = false })
+      opencode.setup({ auto_start = false })
 
       for _, call in ipairs(vim.api.nvim_create_user_command.calls) do
-        if call.vals[1] == "ClaudeCodeAdd" then
+        if call.vals[1] == "OpenCodeAdd" then
           command_handler = call.vals[2]
           break
         end
@@ -167,7 +167,7 @@ describe("ClaudeCodeAdd command", function()
 
     describe("validation", function()
       it("should error when server is not running", function()
-        claudecode.state.server = nil
+        opencode.state.server = nil
 
         command_handler({ args = "/existing/file.lua" })
 
@@ -438,19 +438,19 @@ describe("ClaudeCodeAdd command", function()
     it("should use the extracted broadcast_at_mention function", function()
       -- This test ensures that the command uses the centralized function
       -- rather than duplicating broadcast logic
-      claudecode.setup({ auto_start = false })
+      opencode.setup({ auto_start = false })
 
       local command_handler
       for _, call in ipairs(vim.api.nvim_create_user_command.calls) do
-        if call.vals[1] == "ClaudeCodeAdd" then
+        if call.vals[1] == "OpenCodeAdd" then
           command_handler = call.vals[2]
           break
         end
       end
 
       -- Mock the _format_path_for_at_mention function to verify it's called
-      local original_format = claudecode._format_path_for_at_mention
-      claudecode._format_path_for_at_mention = spy.new(function(path)
+      local original_format = opencode._format_path_for_at_mention
+      opencode._format_path_for_at_mention = spy.new(function(path)
         return path, false
       end)
 
@@ -459,7 +459,7 @@ describe("ClaudeCodeAdd command", function()
       assert.spy(mock_server.broadcast).was_called()
 
       -- Restore original function
-      claudecode._format_path_for_at_mention = original_format
+      opencode._format_path_for_at_mention = original_format
     end)
   end)
 end)

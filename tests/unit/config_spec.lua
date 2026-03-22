@@ -5,10 +5,10 @@ describe("Configuration", function()
   local config
 
   local function setup()
-    package.loaded["claudecode.config"] = nil
-    package.loaded["claudecode.terminal"] = nil
+    package.loaded["opencode.config"] = nil
+    package.loaded["opencode.terminal"] = nil
 
-    config = require("claudecode.config")
+    config = require("opencode.config")
   end
 
   local function teardown()
@@ -23,7 +23,6 @@ describe("Configuration", function()
     expect(config.defaults).to_have_key("auto_start")
     expect(config.defaults).to_have_key("log_level")
     expect(config.defaults).to_have_key("track_selection")
-    expect(config.defaults).to_have_key("models")
     expect(config.defaults).to_have_key("diff_opts")
     expect(config.defaults.diff_opts).to_have_key("keep_terminal_focus")
     expect(config.defaults.diff_opts.keep_terminal_focus).to_be_false()
@@ -34,9 +33,6 @@ describe("Configuration", function()
       terminal_cmd = "toggleterm",
       log_level = "debug",
       track_selection = false,
-      models = {
-        { name = "Test Model", value = "test-model" },
-      },
     }
 
     local final_config = config.apply(user_config)
@@ -77,52 +73,6 @@ describe("Configuration", function()
     expect(success).to_be_false()
   end)
 
-  it("should reject invalid models configuration", function()
-    local invalid_config = {
-      port_range = { min = 10000, max = 65535 },
-      auto_start = true,
-      log_level = "debug",
-      track_selection = false,
-      visual_demotion_delay_ms = 50,
-      diff_opts = {
-        layout = "vertical",
-        open_in_new_tab = false,
-        keep_terminal_focus = false,
-      },
-      models = {}, -- Empty models array should be rejected
-    }
-
-    local success, _ = pcall(function()
-      config.validate(invalid_config)
-    end)
-
-    expect(success).to_be_false()
-  end)
-
-  it("should reject models with invalid structure", function()
-    local invalid_config = {
-      port_range = { min = 10000, max = 65535 },
-      auto_start = true,
-      log_level = "debug",
-      track_selection = false,
-      visual_demotion_delay_ms = 50,
-      diff_opts = {
-        layout = "vertical",
-        open_in_new_tab = false,
-        keep_terminal_focus = false,
-      },
-      models = {
-        { name = "Test Model" }, -- Missing value field
-      },
-    }
-
-    local success, _ = pcall(function()
-      config.validate(invalid_config)
-    end)
-
-    expect(success).to_be_false()
-  end)
-
   it("should merge user config with defaults", function()
     local user_config = {
       auto_start = true,
@@ -135,7 +85,6 @@ describe("Configuration", function()
     expect(merged_config.log_level).to_be("debug")
     expect(merged_config.port_range.min).to_be(config.defaults.port_range.min)
     expect(merged_config.track_selection).to_be(config.defaults.track_selection)
-    expect(merged_config.models).to_be_table()
   end)
 
   it("should accept valid keep_terminal_focus configuration", function()
@@ -154,9 +103,6 @@ describe("Configuration", function()
         keep_terminal_focus = true,
       },
       env = {},
-      models = {
-        { name = "Test Model", value = "test" },
-      },
     }
 
     local final_config = config.apply(user_config)
@@ -179,9 +125,6 @@ describe("Configuration", function()
         keep_terminal_focus = "invalid", -- Should be boolean
       },
       env = {},
-      models = {
-        { name = "Test Model", value = "test" },
-      },
     }
 
     local success, _ = pcall(function()
@@ -208,9 +151,6 @@ describe("Configuration", function()
         open_in_current_tab = true,
       },
       env = {},
-      models = {
-        { name = "Test Model", value = "test" },
-      },
       terminal = {
         provider = "external",
         provider_opts = {
@@ -245,9 +185,6 @@ describe("Configuration", function()
         open_in_current_tab = true,
       },
       env = {},
-      models = {
-        { name = "Test Model", value = "test" },
-      },
       terminal = {
         provider = "external",
         provider_opts = {
@@ -280,9 +217,6 @@ describe("Configuration", function()
         open_in_current_tab = true,
       },
       env = {},
-      models = {
-        { name = "Test Model", value = "test" },
-      },
       terminal = {
         provider = "external",
         provider_opts = {

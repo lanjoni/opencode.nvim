@@ -27,10 +27,6 @@ M.defaults = {
     hide_terminal_in_new_tab = false, -- If true and opening in a new tab, do not show OpenCode terminal there
     on_new_file_reject = "keep_empty", -- "keep_empty" leaves an empty buffer; "close_window" closes the placeholder split
   },
-  -- WIP: Model selection - currently not used by OpenCode
-  -- OpenCode uses terminal-based integration without explicit model selection
-  -- This may be added when OpenCode implements structured API support
-  models = {},
   terminal = nil, -- Will be lazy-loaded to avoid circular dependency
 }
 
@@ -160,20 +156,6 @@ function M.validate(config)
     assert(type(key) == "string", "env keys must be strings")
     assert(type(value) == "string", "env values must be strings")
   end
-
-  -- Validate models (WIP: Currently not used by OpenCode terminal-based integration)
-  -- This validation is disabled as OpenCode uses terminal-based integration without model selection
-  -- When OpenCode implements structured API support, this can be re-enabled
-  --[[
-  assert(type(config.models) == "table", "models must be a table")
-  assert(#config.models > 0, "models must not be empty")
-
-  for i, model in ipairs(config.models) do
-    assert(type(model) == "table", "models[" .. i .. "] must be a table")
-    assert(type(model.name) == "string" and model.name ~= "", "models[" .. i .. "].name must be a non-empty string")
-    assert(type(model.value) == "string" and model.value ~= "", "models[" .. i .. "].value must be a non-empty string")
-  end
-  --]]
 
   return true
 end

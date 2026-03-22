@@ -11,14 +11,14 @@ echo "🧪 Testing openDiff tool behavior..."
 LOCK_DIR="$HOME/.claude/ide"
 if [[ ! -d $LOCK_DIR ]]; then
   echo "❌ Lock directory not found: $LOCK_DIR"
-  echo "   Make sure Neovim with claudecode.nvim is running"
+  echo "   Make sure Neovim with opencode.nvim is running"
   exit 1
 fi
 
 LOCK_FILE=$(find "$LOCK_DIR" -name "*.lock" -type f 2>/dev/null | head -1)
 if [[ -z $LOCK_FILE ]]; then
   echo "❌ No lock files found in $LOCK_DIR"
-  echo "   Make sure Neovim with claudecode.nvim is running"
+  echo "   Make sure Neovim with opencode.nvim is running"
   exit 1
 fi
 

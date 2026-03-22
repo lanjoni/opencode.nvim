@@ -249,12 +249,12 @@ describe("Lockfile Module", function()
 
     -- Create test directory
     local temp_dir = os.getenv("TMPDIR") or "/tmp"
-    local test_dir = temp_dir .. "/claude_test/.claude/ide"
+    local test_dir = temp_dir .. "/claude_test/.opencode/ide"
     os.execute("mkdir -p '" .. test_dir .. "'")
 
     -- Load the lockfile module for all tests
-    package.loaded["claudecode.lockfile"] = nil -- Clear any previous requires
-    lockfile = require("claudecode.lockfile")
+    package.loaded["opencode.lockfile"] = nil -- Clear any previous requires
+    lockfile = require("opencode.lockfile")
   end)
 
   teardown(function()

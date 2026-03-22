@@ -21,11 +21,6 @@
 ---@field hide_terminal_in_new_tab boolean Hide OpenCode terminal in newly created diff tab
 ---@field on_new_file_reject OpenCodeNewFileRejectBehavior Behavior when rejecting a new-file diff
 
--- Model selection option
----@class OpenCodeModelOption
----@field name string
----@field value string
-
 -- Log level type alias
 ---@alias OpenCodeLogLevel "trace"|"debug"|"info"|"warn"|"error"
 
@@ -115,7 +110,6 @@
 ---@field connection_timeout number
 ---@field queue_timeout number
 ---@field diff_opts OpenCodeDiffOptions
----@field models OpenCodeModelOption[]
 ---@field disable_broadcast_debouncing? boolean
 ---@field enable_broadcast_debouncing_in_tests? boolean
 ---@field terminal OpenCodeTerminalConfig?

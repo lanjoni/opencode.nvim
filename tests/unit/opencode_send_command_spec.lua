@@ -1,8 +1,8 @@
 require("tests.busted_setup")
 require("tests.mocks.vim")
 
-describe("ClaudeCodeSend Command Range Functionality", function()
-  local claudecode
+describe("OpenCodeSend Command Range Functionality", function()
+  local opencode
   local mock_selection_module
   local mock_server
   local mock_terminal
@@ -11,20 +11,20 @@ describe("ClaudeCodeSend Command Range Functionality", function()
 
   before_each(function()
     -- Reset package cache
-    package.loaded["claudecode"] = nil
-    package.loaded["claudecode.selection"] = nil
-    package.loaded["claudecode.terminal"] = nil
-    package.loaded["claudecode.server.init"] = nil
-    package.loaded["claudecode.lockfile"] = nil
-    package.loaded["claudecode.config"] = nil
-    package.loaded["claudecode.logger"] = nil
-    package.loaded["claudecode.diff"] = nil
+    package.loaded["opencode"] = nil
+    package.loaded["opencode.selection"] = nil
+    package.loaded["opencode.terminal"] = nil
+    package.loaded["opencode.server.init"] = nil
+    package.loaded["opencode.lockfile"] = nil
+    package.loaded["opencode.config"] = nil
+    package.loaded["opencode.logger"] = nil
+    package.loaded["opencode.diff"] = nil
 
     -- Mock vim API
     _G.vim = {
       api = {
         nvim_create_user_command = spy.new(function(name, callback, opts)
-          if name == "ClaudeCodeSend" then
+          if name == "OpenCodeSend" then
             command_callback = callback
           end
         end),
@@ -116,35 +116,35 @@ describe("ClaudeCodeSend Command Range Functionality", function()
       setup = function() end,
     }
 
-    -- Setup require mocks BEFORE requiring claudecode
+    -- Setup require mocks BEFORE requiring opencode
     original_require = _G.require
     _G.require = function(module_name)
-      if module_name == "claudecode.selection" then
+      if module_name == "opencode.selection" then
         return mock_selection_module
-      elseif module_name == "claudecode.terminal" then
+      elseif module_name == "opencode.terminal" then
         return mock_terminal
-      elseif module_name == "claudecode.server.init" then
+      elseif module_name == "opencode.server.init" then
         return mock_server
-      elseif module_name == "claudecode.lockfile" then
+      elseif module_name == "opencode.lockfile" then
         return mock_lockfile
-      elseif module_name == "claudecode.config" then
+      elseif module_name == "opencode.config" then
         return mock_config
-      elseif module_name == "claudecode.logger" then
+      elseif module_name == "opencode.logger" then
         return mock_logger
-      elseif module_name == "claudecode.diff" then
+      elseif module_name == "opencode.diff" then
         return mock_diff
       else
         return original_require(module_name)
       end
     end
 
-    -- Load and setup claudecode
-    claudecode = require("claudecode")
-    claudecode.setup({})
+    -- Load and setup opencode
+    opencode = require("opencode")
+    opencode.setup({})
 
     -- Manually set server state for testing
-    claudecode.state.server = mock_server
-    claudecode.state.port = 12345
+    opencode.state.server = mock_server
+    opencode.state.port = 12345
   end)
 
   after_each(function()
@@ -152,22 +152,22 @@ describe("ClaudeCodeSend Command Range Functionality", function()
     _G.require = original_require
   end)
 
-  describe("ClaudeCodeSend command", function()
+  describe("OpenCodeSend command", function()
     it("should be registered with range support", function()
       assert.spy(_G.vim.api.nvim_create_user_command).was_called()
 
-      -- Find the ClaudeCodeSend command call
+      -- Find the OpenCodeSend command call
       local calls = _G.vim.api.nvim_create_user_command.calls
-      local claudecode_send_call = nil
+      local opencode_send_call = nil
       for _, call in ipairs(calls) do
-        if call.vals[1] == "ClaudeCodeSend" then
-          claudecode_send_call = call
+        if call.vals[1] == "OpenCodeSend" then
+          opencode_send_call = call
           break
         end
       end
 
-      assert(claudecode_send_call ~= nil, "ClaudeCodeSend command should be registered")
-      assert(claudecode_send_call.vals[3].range == true, "ClaudeCodeSend should support ranges")
+      assert(opencode_send_call ~= nil, "OpenCodeSend command should be registered")
+      assert(opencode_send_call.vals[3].range == true, "OpenCodeSend should support ranges")
     end)
 
     it("should pass range information to selection module when range is provided", function()
@@ -237,7 +237,7 @@ describe("ClaudeCodeSend Command Range Functionality", function()
       assert(command_callback ~= nil, "Command callback should be set")
 
       -- Simulate server not running
-      claudecode.state.server = nil
+      opencode.state.server = nil
 
       local opts = {
         range = 2,

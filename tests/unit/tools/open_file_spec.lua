@@ -5,8 +5,8 @@ describe("Tool: open_file", function()
 
   before_each(function()
     -- Reset mocks and require the module under test
-    package.loaded["claudecode.tools.open_file"] = nil
-    open_file_handler = require("claudecode.tools.open_file").handler
+    package.loaded["opencode.tools.open_file"] = nil
+    open_file_handler = require("opencode.tools.open_file").handler
 
     -- Mock Neovim functions used by the handler
     _G.vim = _G.vim or {}
