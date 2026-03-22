@@ -5,7 +5,7 @@ local function test_opendiff_directly()
   print("🧪 Testing openDiff tool directly...")
 
   -- Use the actual README.md file like the real scenario
-  local readme_path = "/Users/thomask33/GitHub/claudecode.nvim/README.md"
+  local readme_path = "/Users/thomask33/GitHub/opencode.nvim/README.md"
 
   -- Check if README exists
   if vim.fn.filereadable(readme_path) == 0 then
@@ -27,7 +27,7 @@ local function test_opendiff_directly()
     .. "\n\n## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n"
 
   -- Load the openDiff tool
-  local success, open_diff_tool = pcall(require, "claudecode.tools.open_diff")
+  local success, open_diff_tool = pcall(require, "opencode.tools.open_diff")
   if not success then
     print("❌ Failed to load openDiff tool:", open_diff_tool)
     return
@@ -37,7 +37,7 @@ local function test_opendiff_directly()
     old_file_path = readme_path,
     new_file_path = readme_path,
     new_file_contents = new_content,
-    tab_name = "✻ [Claude Code] README.md (test) ⧉",
+    tab_name = "✻ [OpenCode] README.md (test) ⧉",
   }
 
   print("📤 Calling openDiff handler...")

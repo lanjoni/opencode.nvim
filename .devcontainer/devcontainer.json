@@ -1,5 +1,5 @@
 {
-  "name": "claudecode.nvim Development",
+  "name": "opencode.nvim Development",
   "build": {
     "dockerfile": "Dockerfile"
   },

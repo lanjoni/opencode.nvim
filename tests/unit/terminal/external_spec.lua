@@ -1,4 +1,4 @@
-describe("claudecode.terminal.external", function()
+describe("opencode.terminal.external", function()
   local external_provider
   local mock_vim
   local original_vim
@@ -47,18 +47,18 @@ describe("claudecode.terminal.external", function()
     _G.vim = mock_vim
 
     -- Clear package cache and reload module
-    package.loaded["claudecode.terminal.external"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.terminal.external"] = nil
+    package.loaded["opencode.logger"] = nil
 
     -- Mock logger
-    package.loaded["claudecode.logger"] = {
+    package.loaded["opencode.logger"] = {
       debug = spy.new(function() end),
       info = spy.new(function() end),
       warn = spy.new(function() end),
       error = spy.new(function() end),
     }
 
-    external_provider = require("claudecode.terminal.external")
+    external_provider = require("opencode.terminal.external")
   end)
 
   after_each(function()
@@ -88,11 +88,11 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude --help", { ENABLE_IDE_INTEGRATION = "true" })
+      external_provider.open("opencode --help", { ENABLE_IDE_INTEGRATION = "true" })
 
       assert.spy(mock_vim.fn.jobstart).was_called(1)
       local call_args = mock_vim.fn.jobstart.calls[1].vals
-      assert.are.same({ "alacritty", "-e", "claude", "--help" }, call_args[1])
+      assert.are.same({ "alacritty", "-e", "opencode", "--help" }, call_args[1])
       assert.are.same({ ENABLE_IDE_INTEGRATION = "true" }, call_args[2].env)
       assert.are.equal("/cwd", call_args[2].cwd)
     end)
@@ -121,7 +121,7 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude", {})
+      external_provider.open("opencode", {})
 
       assert.spy(mock_vim.notify).was_called()
       assert.spy(mock_vim.fn.jobstart).was_not_called()
@@ -140,11 +140,11 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude --help", { ENABLE_IDE_INTEGRATION = "true" })
+      external_provider.open("opencode --help", { ENABLE_IDE_INTEGRATION = "true" })
 
       assert.spy(mock_vim.fn.jobstart).was_called(1)
       local call_args = mock_vim.fn.jobstart.calls[1].vals
-      assert.are.same({ "alacritty", "--working-directory", "/test/project", "-e", "claude", "--help" }, call_args[1])
+      assert.are.same({ "alacritty", "--working-directory", "/test/project", "-e", "opencode", "--help" }, call_args[1])
       assert.are.same({ ENABLE_IDE_INTEGRATION = "true" }, call_args[2].env)
       assert.are.equal("/test/project", call_args[2].cwd)
     end)
@@ -157,7 +157,7 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude --help", {})
+      external_provider.open("opencode --help", {})
 
       assert.spy(mock_vim.notify).was_called_with(
         "external_terminal_cmd must use 1 '%s' (command) or 2 '%s' placeholders (cwd, command); got 3",
@@ -178,11 +178,11 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude --help", { ENABLE_IDE_INTEGRATION = "true" })
+      external_provider.open("opencode --help", { ENABLE_IDE_INTEGRATION = "true" })
 
       assert.spy(mock_vim.fn.jobstart).was_called(1)
       local call_args = mock_vim.fn.jobstart.calls[1].vals
-      assert.are.same({ "kitty", "claude", "--help" }, call_args[1])
+      assert.are.same({ "kitty", "opencode", "--help" }, call_args[1])
       assert.are.same({ ENABLE_IDE_INTEGRATION = "true" }, call_args[2].env)
       assert.are.equal("/cwd", call_args[2].cwd)
     end)
@@ -197,11 +197,11 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude", { ENABLE_IDE_INTEGRATION = "true" })
+      external_provider.open("opencode", { ENABLE_IDE_INTEGRATION = "true" })
 
       assert.spy(mock_vim.fn.jobstart).was_called(1)
       local call_args = mock_vim.fn.jobstart.calls[1].vals
-      assert.are.same({ "osascript", "-e", 'tell app "Terminal" to do script "claude"' }, call_args[1])
+      assert.are.same({ "osascript", "-e", 'tell app "Terminal" to do script "opencode"' }, call_args[1])
       assert.are.equal("/cwd", call_args[2].cwd)
     end)
 
@@ -219,9 +219,9 @@ describe("claudecode.terminal.external", function()
       external_provider.setup(config)
 
       local test_env = { ENABLE_IDE_INTEGRATION = "true", CLAUDE_CODE_SSE_PORT = "12345" }
-      external_provider.open("claude --resume", test_env)
+      external_provider.open("opencode --resume", test_env)
 
-      assert.are.equal("claude --resume", received_cmd)
+      assert.are.equal("opencode --resume", received_cmd)
       assert.are.same(test_env, received_env)
     end)
 
@@ -235,7 +235,7 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude", {})
+      external_provider.open("opencode", {})
 
       assert
         .spy(mock_vim.notify)
@@ -253,7 +253,7 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude", {})
+      external_provider.open("opencode", {})
 
       assert
         .spy(mock_vim.notify)
@@ -266,7 +266,7 @@ describe("claudecode.terminal.external", function()
     it("should error if external_terminal_cmd not configured", function()
       external_provider.setup({})
 
-      external_provider.open("claude", {})
+      external_provider.open("opencode", {})
 
       assert.spy(mock_vim.notify).was_called_with(
         "external_terminal_cmd not configured. Please set terminal.provider_opts.external_terminal_cmd in your config.",
@@ -283,7 +283,7 @@ describe("claudecode.terminal.external", function()
       }
       external_provider.setup(config)
 
-      external_provider.open("claude", {})
+      external_provider.open("opencode", {})
 
       assert
         .spy(mock_vim.notify)
@@ -302,7 +302,7 @@ describe("claudecode.terminal.external", function()
       external_provider.setup(config)
 
       -- Start a terminal
-      external_provider.open("claude", {})
+      external_provider.open("opencode", {})
 
       -- Close it
       external_provider.close()

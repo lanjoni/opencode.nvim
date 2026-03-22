@@ -4,18 +4,18 @@ describe("Tool: get_diagnostics", function()
   local get_diagnostics_handler
 
   before_each(function()
-    package.loaded["claudecode.tools.get_diagnostics"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.tools.get_diagnostics"] = nil
+    package.loaded["opencode.logger"] = nil
 
     -- Mock the logger module
-    package.loaded["claudecode.logger"] = {
+    package.loaded["opencode.logger"] = {
       debug = function() end,
       error = function() end,
       info = function() end,
       warn = function() end,
     }
 
-    get_diagnostics_handler = require("claudecode.tools.get_diagnostics").handler
+    get_diagnostics_handler = require("opencode.tools.get_diagnostics").handler
 
     _G.vim = _G.vim or {}
     _G.vim.lsp = _G.vim.lsp or {} -- Ensure vim.lsp exists for the check
@@ -54,8 +54,8 @@ describe("Tool: get_diagnostics", function()
   end)
 
   after_each(function()
-    package.loaded["claudecode.tools.get_diagnostics"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.tools.get_diagnostics"] = nil
+    package.loaded["opencode.logger"] = nil
     _G.vim.diagnostic.get = nil
     _G.vim.api.nvim_buf_get_name = nil
     _G.vim.json.encode = nil

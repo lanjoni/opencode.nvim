@@ -1,4 +1,4 @@
-# claudecode.nvim repro workspace
+# opencode.nvim repro workspace
 
 This directory is copied into a temp workspace when you run `repro`.
 
@@ -13,7 +13,7 @@ repro
 
 That will:
 
-- create `/tmp/claudecode.nvim-repro` (reset on every run; use `repro --keep` to reuse)
+- create `/tmp/opencode.nvim-repro` (reset on every run; use `repro --keep` to reuse)
 - open Neovim with the **minimal** `fixtures/repro` config
 - open `a.txt` so your current window is non-empty
 
@@ -41,12 +41,12 @@ The Neovim config lives at `fixtures/repro/init.lua`.
 
 A basic end-to-end diff flow you can use to sanity-check the environment:
 
-1. Start Claude:
+1. Start OpenCode:
 
    - press `<leader>ac` (starts the server if needed, then opens the terminal), **or**
-   - run `:ClaudeCodeStart` then `:ClaudeCode`
+   - run `:OpenCodeStart` then `:OpenCode`
 
-2. Ask Claude to edit `b.txt` (do not open it in a window first)
+2. Ask OpenCode to edit `b.txt` (do not open it in a window first)
 3. Accept the diff with `:w` (or `<leader>aa`)
 4. Confirm you didn’t get any extra leftover windows: `:echo winnr('$')`
 

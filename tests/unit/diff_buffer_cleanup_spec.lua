@@ -6,11 +6,11 @@ describe("Diff Buffer Cleanup Edge Cases", function()
   local mock_vim
 
   local function setup_mocks()
-    package.loaded["claudecode.diff"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.diff"] = nil
+    package.loaded["opencode.logger"] = nil
 
     -- Mock logger
-    package.loaded["claudecode.logger"] = {
+    package.loaded["opencode.logger"] = {
       debug = function() end,
       warn = function() end,
       error = function() end,
@@ -126,7 +126,7 @@ describe("Diff Buffer Cleanup Edge Cases", function()
 
   before_each(function()
     setup_mocks()
-    diff_module = require("claudecode.diff")
+    diff_module = require("opencode.diff")
   end)
 
   describe("buffer creation failure handling", function()

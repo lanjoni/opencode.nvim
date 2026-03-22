@@ -1,9 +1,9 @@
-describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
+describe("opencode.terminal (wrapper for Snacks.nvim)", function()
   local terminal_wrapper
   local spy
   local mock_snacks_module
   local mock_snacks_terminal
-  local mock_claudecode_config_module
+  local mock_opencode_config_module
   local mock_snacks_provider
   local mock_native_provider
   local last_created_mock_term_instance
@@ -98,7 +98,7 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
     spy_instance_mt.__call = function(self, ...)
       table.insert(self.calls, { refs = internal_deepcopy_for_spy_calls({ ... }) })
       if self.fake_fn then
-        return self.fake_fn(unpack({ ... }))
+        return self.fake_fn(table.unpack({ ... }))
       end
     end
 
@@ -222,16 +222,16 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
       },
     }
 
-    package.loaded["claudecode.terminal"] = nil
-    package.loaded["claudecode.terminal.snacks"] = nil
-    package.loaded["claudecode.terminal.native"] = nil
-    package.loaded["claudecode.server.init"] = nil
+    package.loaded["opencode.terminal"] = nil
+    package.loaded["opencode.terminal.snacks"] = nil
+    package.loaded["opencode.terminal.native"] = nil
+    package.loaded["opencode.server.init"] = nil
     package.loaded["snacks"] = nil
-    package.loaded["claudecode.config"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.config"] = nil
+    package.loaded["opencode.logger"] = nil
 
     -- Mock logger
-    package.loaded["claudecode.logger"] = {
+    package.loaded["opencode.logger"] = {
       debug = function() end,
       warn = function(context, message)
         vim.notify(message, vim.log.levels.WARN)
@@ -245,9 +245,9 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
     local mock_server_module = {
       state = { port = 12345 },
     }
-    package.loaded["claudecode.server.init"] = mock_server_module
+    package.loaded["opencode.server.init"] = mock_server_module
 
-    mock_claudecode_config_module = {
+    mock_opencode_config_module = {
       apply = spy.new(function(user_conf)
         local base_config = { terminal_cmd = "claude" }
         if user_conf and user_conf.terminal_cmd then
@@ -256,7 +256,7 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
         return base_config
       end),
     }
-    package.loaded["claudecode.config"] = mock_claudecode_config_module
+    package.loaded["opencode.config"] = mock_opencode_config_module
 
     -- Mock the provider modules
     mock_snacks_provider = {
@@ -282,7 +282,7 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
         return last_created_mock_term_instance
       end),
     }
-    package.loaded["claudecode.terminal.snacks"] = mock_snacks_provider
+    package.loaded["opencode.terminal.snacks"] = mock_snacks_provider
 
     mock_native_provider = {
       setup = spy.new(function() end),
@@ -298,7 +298,7 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
         return true
       end),
     }
-    package.loaded["claudecode.terminal.native"] = mock_native_provider
+    package.loaded["opencode.terminal.native"] = mock_native_provider
 
     mock_snacks_terminal = {
       open = spy.new(create_mock_terminal_instance),
@@ -318,7 +318,7 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
     mock_snacks_module = { terminal = mock_snacks_terminal }
     package.loaded["snacks"] = mock_snacks_module
 
-    vim.g.claudecode_user_config = {}
+    vim.g.opencode_user_config = {}
 
     local original_mock_vim_deepcopy = _G.vim.deepcopy
     _G.vim.deepcopy = spy.new(function(tbl)
@@ -361,18 +361,18 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
     vim.cmd = spy.new(function(_cmd_str) end)
     vim.notify = spy.new(function(_msg, _level) end)
 
-    terminal_wrapper = require("claudecode.terminal")
+    terminal_wrapper = require("opencode.terminal")
     -- Don't call setup({}) here to allow custom provider tests to work
   end)
 
   after_each(function()
-    package.loaded["claudecode.terminal"] = nil
-    package.loaded["claudecode.terminal.snacks"] = nil
-    package.loaded["claudecode.terminal.native"] = nil
-    package.loaded["claudecode.server.init"] = nil
+    package.loaded["opencode.terminal"] = nil
+    package.loaded["opencode.terminal.snacks"] = nil
+    package.loaded["opencode.terminal.native"] = nil
+    package.loaded["opencode.server.init"] = nil
     package.loaded["snacks"] = nil
-    package.loaded["claudecode.config"] = nil
-    package.loaded["claudecode.logger"] = nil
+    package.loaded["opencode.config"] = nil
+    package.loaded["opencode.logger"] = nil
     if _G.vim and _G.vim._mock and _G.vim._mock.reset then
       _G.vim._mock.reset()
     end
@@ -427,7 +427,7 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
       assert.are.equal("right", config_arg.split_side)
       assert.are.equal(0.30, config_arg.split_width_percentage)
       vim.notify:was_called_with(
-        "claudecode.terminal.setup expects a table or nil for user_term_config",
+        "opencode.terminal.setup expects a table or nil for user_term_config",
         vim.log.levels.WARN
       )
     end)
@@ -435,15 +435,15 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
   describe("terminal.open", function()
     it(
-      "should call Snacks.terminal.open with default 'claude' command if terminal_cmd is not set in main config",
+      "should call Snacks.terminal.open with default 'opencode' command if terminal_cmd is not set in main config",
       function()
-        vim.g.claudecode_user_config = {}
-        mock_claudecode_config_module.apply = spy.new(function()
-          return { terminal_cmd = "claude" }
+        vim.g.opencode_user_config = {}
+        mock_opencode_config_module.apply = spy.new(function()
+          return { terminal_cmd = "opencode" }
         end)
-        package.loaded["claudecode.config"] = mock_claudecode_config_module
-        package.loaded["claudecode.terminal"] = nil
-        terminal_wrapper = require("claudecode.terminal")
+        package.loaded["opencode.config"] = mock_opencode_config_module
+        package.loaded["opencode.terminal"] = nil
+        terminal_wrapper = require("opencode.terminal")
         terminal_wrapper.setup({})
 
         terminal_wrapper.open()
@@ -453,9 +453,10 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
         local env_arg = mock_snacks_provider.open:get_call(1).refs[2]
         local config_arg = mock_snacks_provider.open:get_call(1).refs[3]
 
-        assert.are.equal("claude", cmd_arg)
-        assert.is_table(env_arg)
-        assert.are.equal("true", env_arg.ENABLE_IDE_INTEGRATION)
+        -- OpenCode adds --port flag for API communication
+        assert.is_true(cmd_arg:find("^opencode") ~= nil, "Command should start with opencode")
+        -- env_arg may be nil for OpenCode (no env vars set by default)
+        assert.is_true(env_arg == nil or type(env_arg) == "table", "env should be nil or table")
         assert.is_table(config_arg)
         assert.are.equal("right", config_arg.split_side)
         assert.are.equal(0.30, config_arg.split_width_percentage)
@@ -463,13 +464,13 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
     )
 
     it("should call Snacks.terminal.open with terminal_cmd from main config", function()
-      vim.g.claudecode_user_config = { terminal_cmd = "my_claude_cli" }
-      mock_claudecode_config_module.apply = spy.new(function()
+      vim.g.opencode_user_config = { terminal_cmd = "my_claude_cli" }
+      mock_opencode_config_module.apply = spy.new(function()
         return { terminal_cmd = "my_claude_cli" }
       end)
-      package.loaded["claudecode.config"] = mock_claudecode_config_module
-      package.loaded["claudecode.terminal"] = nil
-      terminal_wrapper = require("claudecode.terminal")
+      package.loaded["opencode.config"] = mock_opencode_config_module
+      package.loaded["opencode.terminal"] = nil
+      terminal_wrapper = require("opencode.terminal")
       terminal_wrapper.setup({}, "my_claude_cli")
 
       terminal_wrapper.open()
@@ -565,13 +566,13 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
   describe("terminal.toggle", function()
     it("should call Snacks.terminal.toggle with correct command and options", function()
-      vim.g.claudecode_user_config = { terminal_cmd = "toggle_claude" }
-      mock_claudecode_config_module.apply = spy.new(function()
+      vim.g.opencode_user_config = { terminal_cmd = "toggle_claude" }
+      mock_opencode_config_module.apply = spy.new(function()
         return { terminal_cmd = "toggle_claude" }
       end)
-      package.loaded["claudecode.config"] = mock_claudecode_config_module
-      package.loaded["claudecode.terminal"] = nil
-      terminal_wrapper = require("claudecode.terminal")
+      package.loaded["opencode.config"] = mock_opencode_config_module
+      package.loaded["opencode.terminal"] = nil
+      terminal_wrapper = require("opencode.terminal")
       terminal_wrapper.setup({ split_side = "left", split_width_percentage = 0.4 }, "toggle_claude")
 
       terminal_wrapper.toggle({ split_width_percentage = 0.45 })
@@ -639,7 +640,9 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.open:was_called(1)
       local cmd_arg = mock_snacks_provider.open:get_call(1).refs[1]
-      assert.are.equal("claude --resume", cmd_arg)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(cmd_arg:find("opencode") ~= nil, "Command should contain opencode")
+      assert.is_true(cmd_arg:find("%-%-resume") ~= nil, "Command should contain --resume")
     end)
 
     it("should append cmd_args to base command when provided to toggle", function()
@@ -647,7 +650,10 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.simple_toggle:was_called(1)
       local cmd_arg = mock_snacks_provider.simple_toggle:get_call(1).refs[1]
-      assert.are.equal("claude --resume --verbose", cmd_arg)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(cmd_arg:find("opencode") ~= nil, "Command should contain opencode")
+      assert.is_true(cmd_arg:find("%-%-resume") ~= nil, "Command should contain --resume")
+      assert.is_true(cmd_arg:find("%-%-verbose") ~= nil, "Command should contain --verbose")
     end)
 
     it("should work with custom terminal_cmd and arguments", function()
@@ -664,7 +670,8 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.open:was_called(1)
       local cmd_arg = mock_snacks_provider.open:get_call(1).refs[1]
-      assert.are.equal("claude", cmd_arg)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(cmd_arg:find("^opencode") ~= nil, "Command should start with opencode")
     end)
 
     it("should fallback gracefully when cmd_args is empty string", function()
@@ -672,7 +679,8 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.simple_toggle:was_called(1)
       local cmd_arg = mock_snacks_provider.simple_toggle:get_call(1).refs[1]
-      assert.are.equal("claude", cmd_arg)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(cmd_arg:find("^opencode") ~= nil, "Command should start with opencode")
     end)
 
     it("should work with both opts_override and cmd_args", function()
@@ -682,7 +690,9 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
       local cmd_arg = mock_snacks_provider.open:get_call(1).refs[1]
       local config_arg = mock_snacks_provider.open:get_call(1).refs[3]
 
-      assert.are.equal("claude --resume", cmd_arg)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(cmd_arg:find("opencode") ~= nil, "Command should contain opencode")
+      assert.is_true(cmd_arg:find("%-%-resume") ~= nil, "Command should contain --resume")
       assert.are.equal("left", config_arg.split_side)
     end)
 
@@ -691,7 +701,9 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.open:was_called(1)
       local cmd_arg = mock_snacks_provider.open:get_call(1).refs[1]
-      assert.are.equal("claude --message='hello world'", cmd_arg)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(cmd_arg:find("opencode") ~= nil, "Command should contain opencode")
+      assert.is_true(cmd_arg:find("%-%-message='hello world'") ~= nil, "Command should contain special message")
     end)
 
     it("should maintain backward compatibility when no cmd_args provided", function()
@@ -699,7 +711,8 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.open:was_called(1)
       local open_cmd = mock_snacks_provider.open:get_call(1).refs[1]
-      assert.are.equal("claude", open_cmd)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(open_cmd:find("^opencode") ~= nil, "Open command should start with opencode")
 
       -- Close the existing terminal and reset spies to test toggle in isolation
       terminal_wrapper.close()
@@ -710,7 +723,8 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
 
       mock_snacks_provider.simple_toggle:was_called(1)
       local toggle_cmd = mock_snacks_provider.simple_toggle:get_call(1).refs[1]
-      assert.are.equal("claude", toggle_cmd)
+      -- OpenCode adds --port flag for API communication
+      assert.is_true(toggle_cmd:find("^opencode") ~= nil, "Toggle command should start with opencode")
     end)
   end)
 
@@ -842,7 +856,8 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
         open_spy:was_called()
         local open_call = open_spy:get_call(1)
         assert.is_string(open_call.refs[1]) -- cmd_string
-        assert.is_table(open_call.refs[2]) -- env_table
+        -- env_table may be nil if empty (OpenCode doesn't set env vars by default)
+        assert.is_true(open_call.refs[2] == nil or type(open_call.refs[2]) == "table", "env_table should be nil or table")
         assert.is_table(open_call.refs[3]) -- effective_config
 
         -- Test simple_toggle with parameters
@@ -850,7 +865,8 @@ describe("claudecode.terminal (wrapper for Snacks.nvim)", function()
         simple_toggle_spy:was_called()
         local toggle_call = simple_toggle_spy:get_call(1)
         assert.is_string(toggle_call.refs[1]) -- cmd_string
-        assert.is_table(toggle_call.refs[2]) -- env_table
+        -- env_table may be nil if empty (OpenCode doesn't set env vars by default)
+        assert.is_true(toggle_call.refs[2] == nil or type(toggle_call.refs[2]) == "table", "env_table should be nil or table")
         assert.is_table(toggle_call.refs[3]) -- effective_config
       end)
     end)

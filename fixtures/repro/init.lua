@@ -1,4 +1,4 @@
--- Minimal repro config for claudecode.nvim issues.
+-- Minimal repro config for opencode.nvim issues.
 --
 -- This fixture intentionally avoids a plugin manager so it's easy to run and reason about.
 --
@@ -9,7 +9,7 @@
 -- To edit this config:
 --   vve repro
 
--- Ensure this repo is on the runtimepath so `plugin/claudecode.lua` is loaded.
+-- Ensure this repo is on the runtimepath so `plugin/opencode.lua` is loaded.
 local config_dir = vim.fn.stdpath("config")
 local repo_root = vim.fn.fnamemodify(config_dir, ":h:h")
 
@@ -19,10 +19,10 @@ vim.opt.rtp:prepend(repo_root)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-local ok, claudecode = pcall(require, "claudecode")
-assert(ok, "Failed to load claudecode.nvim from repo root: " .. tostring(claudecode))
+local ok, opencode = pcall(require, "opencode")
+assert(ok, "Failed to load opencode.nvim from repo root: " .. tostring(opencode))
 
-claudecode.setup({
+opencode.setup({
   auto_start = false, -- avoid noisy startup + make restarts deterministic
   log_level = "debug",
   terminal = {
@@ -36,13 +36,13 @@ claudecode.setup({
   },
 })
 
-local function ensure_claudecode_started()
+local function ensure_opencode_started()
   local ok_start, started_or_err, port_or_err = pcall(function()
-    return claudecode.start(false)
+    return opencode.start(false)
   end)
 
   if not ok_start then
-    vim.notify("ClaudeCode start crashed: " .. tostring(started_or_err), vim.log.levels.ERROR)
+    vim.notify("OpenCode start crashed: " .. tostring(started_or_err), vim.log.levels.ERROR)
     return false
   end
 
@@ -56,27 +56,27 @@ local function ensure_claudecode_started()
     return true
   end
 
-  vim.notify("ClaudeCode failed to start: " .. tostring(port_or_err), vim.log.levels.ERROR)
+  vim.notify("OpenCode failed to start: " .. tostring(port_or_err), vim.log.levels.ERROR)
   return false
 end
 
 -- Keymaps (kept small on purpose)
 vim.keymap.set("n", "<leader>ac", function()
-  if ensure_claudecode_started() then
-    local terminal = require("claudecode.terminal")
+  if ensure_opencode_started() then
+    local terminal = require("opencode.terminal")
     terminal.simple_toggle({}, nil)
   end
-end, { desc = "Toggle Claude" })
+end, { desc = "Toggle OpenCode" })
 
 vim.keymap.set("n", "<leader>af", function()
-  if ensure_claudecode_started() then
-    local terminal = require("claudecode.terminal")
+  if ensure_opencode_started() then
+    local terminal = require("opencode.terminal")
     terminal.focus_toggle({}, nil)
   end
-end, { desc = "Focus Claude" })
+end, { desc = "Focus OpenCode" })
 
-vim.keymap.set("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", { desc = "Accept diff" })
-vim.keymap.set("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", { desc = "Deny diff" })
+vim.keymap.set("n", "<leader>aa", "<cmd>OpenCodeDiffAccept<cr>", { desc = "Accept diff" })
+vim.keymap.set("n", "<leader>ad", "<cmd>OpenCodeDiffDeny<cr>", { desc = "Deny diff" })
 
 -- Convenience helpers for iterating on this fixture.
 vim.api.nvim_create_user_command("ReproEditConfig", function()

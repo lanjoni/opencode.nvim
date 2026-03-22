@@ -31,7 +31,7 @@ describe("Diff split window cleanup", function()
     f:close()
 
     -- Minimal logger stub
-    package.loaded["claudecode.logger"] = {
+    package.loaded["opencode.logger"] = {
       debug = function() end,
       error = function() end,
       info = function() end,
@@ -39,8 +39,8 @@ describe("Diff split window cleanup", function()
     }
 
     -- Reload diff module cleanly
-    package.loaded["claudecode.diff"] = nil
-    diff = require("claudecode.diff")
+    package.loaded["opencode.diff"] = nil
+    diff = require("opencode.diff")
 
     diff.setup({
       diff_opts = {
@@ -57,7 +57,7 @@ describe("Diff split window cleanup", function()
     if diff and diff._cleanup_all_active_diffs then
       diff._cleanup_all_active_diffs("test teardown")
     end
-    package.loaded["claudecode.diff"] = nil
+    package.loaded["opencode.diff"] = nil
   end)
 
   it("closes the plugin-created original split after accept when close_tab is invoked", function()

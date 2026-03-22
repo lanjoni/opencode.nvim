@@ -1,7 +1,8 @@
 #!/usr/bin/env lua
 
--- Test script that mimics Claude Code CLI sending an openDiff tool call
--- This helps automate testing of the openDiff blocking behavior
+-- Test script that mimics the legacy Claude Code CLI sending an openDiff tool call
+-- Note: This script is for testing the WebSocket/MCP protocol which is currently
+-- WIP (not functional) for OpenCode. OpenCode uses terminal-based integration.
 
 local socket = require("socket")
 local json = require("json") or require("cjson") or require("dkjson")
@@ -9,7 +10,7 @@ local json = require("json") or require("cjson") or require("dkjson")
 -- Configuration
 local HOST = "127.0.0.1"
 local PORT = nil -- Will discover from lock file
-local LOCK_FILE_PATH = os.getenv("HOME") .. "/.claude/ide/"
+local LOCK_FILE_PATH = os.getenv("HOME") .. "/.opencode/ide/"
 
 -- Discover port from lock files
 local function discover_port()
@@ -114,7 +115,7 @@ local function test_opendiff()
   -- Step 1: Discover port
   PORT = discover_port()
   if not PORT then
-    print("❌ Make sure Neovim with claudecode.nvim is running first")
+    print("❌ Make sure Neovim with opencode.nvim is running first")
     os.exit(1)
   end
 

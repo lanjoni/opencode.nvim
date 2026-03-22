@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-- `lua/claudecode/`: Core plugin modules (`init.lua`, `config.lua`, `diff.lua`, `terminal/`, `server/`, `tools/`, `logger.lua`, etc.).
+- `lua/opencode/`: Core plugin modules (`init.lua`, `config.lua`, `diff.lua`, `terminal/`, `server/`, `tools/`, `logger.lua`, etc.).
 - `plugin/`: Lightweight loader that guards startup and optional auto-setup.
 - `tests/`: Busted test suite (`unit/`, `integration/`, `helpers/`, `mocks/`).
 - `fixtures/`: Minimal Neovim configs for manual and integration testing.
@@ -42,5 +42,5 @@
 
 ## Security & Configuration Tips
 
-- Do not commit secrets or local paths; prefer environment variables. The plugin honors `CLAUDE_CONFIG_DIR` for lock files.
+- Do not commit secrets or local paths; prefer environment variables. The plugin honors `OPENCODE_CONFIG_DIR` (with fallback to `CLAUDE_CONFIG_DIR` for backward compatibility) for lock files.
 - Local CLI paths (e.g., `opts.terminal_cmd`) should be configured in user config, not hardcoded in repo files.
