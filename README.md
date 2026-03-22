@@ -1,25 +1,24 @@
 # opencode.nvim
 
-[![Tests](https://github.com/lanjoni/opencode.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/lanjoni/opencode.nvim/actions/workflows/test.yml)
-![Neovim version](https://img.shields.io/badge/Neovim-0.8%2B-green)
-![Status](https://img.shields.io/badge/Status-beta-blue)
+[![tests](https://github.com/lanjoni/opencode.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/lanjoni/opencode.nvim/actions/workflows/test.yml)
+![neovim version](https://img.shields.io/badge/Neovim-0.8%2B-green)
+![status](https://img.shields.io/badge/Status-beta-blue)
 
-**The first Neovim IDE integration for OpenCode** — bringing Anthropic's AI coding assistant to your favorite editor with a pure Lua implementation.
+**a new neovim integration for opencode** — bringing opencode assistant to your favorite editor with a pure lua implementation.
 
-> 🎯 **TL;DR:** When Anthropic released OpenCode with VS Code and JetBrains support, I reverse-engineered their extension and built this Neovim plugin. This plugin implements the same WebSocket-based MCP protocol, giving Neovim users the same AI-powered coding experience.
+> 🎯 **TL;DR:** this project is a fork of [coder/claudecode.nvim](https://github.com/coder/claudecode.nvim). the reason? well, I've been using `claudecode.nvim` directly and the experience is amazing with this plugin. after some time I'm testing opencode, and it seems the only existing integrations with it are not smooth enough in comparison to my previous claude code experience. so, to improve it, I made this fork, specially handling file reference with properly anchors (with text like `@path/to/file#L1-L2`) instead of what other opencode plugins does (refer just using plain text). also it's important to mention that implementation was made using opencode with [kimi k2.5](https://www.kimi.com/ai-models/kimi-k2-5).
 
 <https://github.com/user-attachments/assets/c069c25a-5dba-4737-b4c9-b0962c804f40>
 
-## What Makes This Special
+## what makes this special
 
-When Anthropic released OpenCode, they only supported VS Code and JetBrains. As a Neovim user, I wanted the same experience — so I reverse-engineered their extension and built this.
+the original implementation has a reverse-engineered version of claude code plugin for other IDEs, so that's one of the reasons why this experience was so smooth.
 
-- 🚀 **Pure Lua, Zero Dependencies** — Built entirely with `vim.loop` and Neovim built-ins
-- 🔌 **100% Protocol Compatible** — Same WebSocket MCP implementation as official extensions
-- ⚡ **First to Market** — Beat Anthropic to releasing Neovim support
-- 🛠️ **Built with AI** — Used OpenCode to reverse-engineer OpenCode's own protocol
+- **pure lua, zero dependencies** — built entirely with `vim.loop` and neovim built-ins
+- **built with AI** — used opencode to make this implementation
+- **proper file handling** - as opencode still doesn't support websocket connection (that's an issue and this feature is in development right now) all handling here doesn't have the smoothiest experience, BUT it seems better integrated for simple usage (as I prefer to use a vanilla setup for my coding experience), making correctly file handling and interacting better with terminal
 
-## Installation
+## installation
 
 ```lua
 {
@@ -47,44 +46,21 @@ When Anthropic released OpenCode, they only supported VS Code and JetBrains. As 
 }
 ```
 
-That's it! The plugin will auto-configure everything else.
+that's it! the plugin will auto-configure everything else.
 
-## Requirements
+## requirements
 
-- Neovim >= 0.8.0
-- [OpenCode CLI](https://opencode.ai/docs/) installed
+- neovim >= 0.8.0
+- [opencode](https://opencode.ai/docs/) installed
 - [folke/snacks.nvim](https://github.com/folke/snacks.nvim) for enhanced terminal support
 
-## Local Installation Configuration
+## local installation configuration
 
-If you've used OpenCode's `migrate-installer` command to move to a local installation, you'll need to configure the plugin to use the local path.
+if you have your opencode in some different place that you may want to refer (or even a local development branch) you can use a local installation path.
 
-### What is a Local Installation?
+### configuring for local installation
 
-OpenCode offers a `opencode install` command that:
-
-- Moves OpenCode from a global npm installation to `~/.opencode/local/`
-- Avoids permission issues with system directories
-- Creates shell aliases but these may not be available to Neovim
-
-### Detecting Your Installation Type
-
-Check your installation type:
-
-```bash
-# Check where opencode command points
-which opencode
-
-# Global installation shows: /usr/local/bin/opencode (or similar)
-# Local installation shows: alias to ~/.opencode/local/opencode
-
-# Verify installation health
-opencode doctor
-```
-
-### Configuring for Local Installation
-
-If you have a local installation, configure the plugin with the direct path:
+configure the plugin with the direct path:
 
 ```lua
 {
@@ -99,65 +75,6 @@ If you have a local installation, configure the plugin with the direct path:
   },
 }
 ```
-
-<details>
-<summary>Native Binary Installation (Alpha)</summary>
-
-OpenCode also offers an experimental native binary installation method currently in alpha testing. This provides a single executable with no Node.js dependencies.
-
-#### Installation Methods
-
-Install the native binary using one of these methods:
-
-```bash
-# Fresh install (recommended)
-curl -fsSL opencode.ai/install | bash
-
-# From existing OpenCode installation
-opencode install
-```
-
-#### Platform Support
-
-- **macOS**: Full support for Intel and Apple Silicon
-- **Linux**: x64 and arm64 architectures
-- **Windows**: Via WSL (Windows Subsystem for Linux)
-
-#### Benefits
-
-- **Zero Dependencies**: Single executable file with no external requirements
-- **Cross-Platform**: Consistent experience across operating systems
-- **Secure Installation**: Includes checksum verification and automatic cleanup
-
-#### Configuring for Native Binary
-
-The exact binary path depends on your shell integration. To find your installation:
-
-```bash
-# Check where opencode command points
-which opencode
-
-# Verify installation type and health
-opencode doctor
-```
-
-Configure the plugin with the detected path:
-
-```lua
-{
-  "lanjoni/opencode.nvim",
-  dependencies = { "folke/snacks.nvim" },
-  opts = {
-    terminal_cmd = "/path/to/your/opencode", -- Use output from 'which opencode'
-  },
-  config = true,
-  keys = {
-    -- Your keymaps here
-  },
-}
-```
-
-</details>
 
 > **Note**: If OpenCode was installed globally via npm, you can use the default configuration without specifying `terminal_cmd`.
 
@@ -175,60 +92,62 @@ Configure the plugin with the detected path:
 " OpenCode can open files, show diffs, and more
 ```
 
-## Usage
+## usage
 
-1. **Launch OpenCode**: Run `:OpenCode` to open OpenCode in a split terminal
-2. **Send context**:
-   - Select text in visual mode and use `<leader>as` to send it to OpenCode
-   - In `nvim-tree`/`neo-tree`/`oil.nvim`/`mini.nvim`, press `<leader>as` on a file to add it to OpenCode's context
-3. **Let OpenCode work**: OpenCode can now:
-   - See your current file and selections in real-time
-   - Open files in your editor
-   - Show diffs with proposed changes
-   - Access diagnostics and workspace info
+1. **launch opencode**: run `:OpenCode` to open opencode in a split terminal (I like to use the default settings pressing `<leader>ac`
+2. **send context**:
+   - select text in visual mode and use `<leader>as` to send it to opencode
+   - in `nvim-tree`/`neo-tree`/`oil.nvim`/`mini.nvim`, press `<leader>as` on a file to add it to opencode's context
+3. **let opencode work**: opencode can now:
+   - see your current file and selections in real-time
+   - open files in your editor
+   - show diffs with proposed changes
+   - access diagnostics and workspace info
+  
+also to keep things minimal, I removed the model selection to make it directly to opencode. the implementation can be done in future but for now I usually recommend selecting models and more inside the opencode interface.
 
-## Key Commands
+## key commands
 
-- `:OpenCode` - Toggle the OpenCode terminal window
-- `:OpenCodeFocus` - Smart focus/toggle OpenCode terminal
-- `:OpenCodeSend` - Send current visual selection to OpenCode
-- `:OpenCodeAdd <file-path> [start-line] [end-line]` - Add specific file to OpenCode context with optional line range
-- `:OpenCodeDiffAccept` - Accept diff changes
-- `:OpenCodeDiffDeny` - Reject diff changes
+- `:OpenCode` - toggle the opencode terminal window
+- `:OpenCodeFocus` - smart focus/toggle opencode terminal
+- `:OpenCodeSend` - send current visual selection to opencode
+- `:OpenCodeAdd <file-path> [start-line] [end-line]` - add specific file to opencode context with optional line range
+- `:OpenCodeDiffAccept` - accept diff changes
+- `:OpenCodeDiffDeny` - reject diff changes
 
-## Working with Diffs
+## working with diffs
 
-When OpenCode proposes changes, the plugin opens a native Neovim diff view:
+when opencode proposes changes, the plugin opens a native Neovim diff view:
 
 - **Accept**: `:w` (save) or `<leader>aa`
 - **Reject**: `:q` or `<leader>ad`
 
-You can edit OpenCode's suggestions before accepting them.
+you can edit opencode's suggestions before accepting them.
 
-## How It Works
+## how it works
 
 This plugin integrates with OpenCode using terminal-based communication. When you launch OpenCode, the plugin opens it in a dedicated terminal and communicates via stdin injection.
 
-### Current Implementation (Terminal-Based)
+### current implementation (terminal-based)
 
-1. **Terminal Launch**: Opens OpenCode in a split terminal with `--port` flag for HTTP API access
-2. **Autocomplete Simulation**: Sends `@filename` via terminal input to trigger OpenCode's autocomplete
-3. **File References**: Selects files from autocomplete to create styled file parts
-4. **Context Sharing**: Sends visual selections and file references directly to the prompt
+1. **terminal launch**: opens opencode in a split terminal with `--port` flag for http api access
+2. **autocomplete simulation**: sends `@filename` via terminal input to trigger opencode's autocomplete
+3. **file references**: selects files from autocomplete to create styled file parts
+4. **context sharing**: sends visual selections and file references directly to the prompt
 
-### WIP: Future WebSocket/SSE Support
+### WIP: future websocket/sse support
 
-When OpenCode implements proper IDE integration API:
-- WebSocket or SSE for bidirectional communication
-- Structured message support (FilePart, AgentPart, etc.)
-- Lock file system at `~/.opencode/ide/[port].lock`
-- MCP tool implementation
+when opencode implements proper IDE integration api:
+- websocket or sse for bidirectional communication
+- structured message support (filepart, agentpart, etc.)
+- lock file system at `~/.opencode/ide/[port].lock`
+- mcp tool implementation
 
-The current terminal-based approach provides immediate functionality while we await official API support from OpenCode.
+the current terminal-based approach provides immediate functionality while we await official websocket api support from opencode.
 
-## Architecture
+## architecture
 
-Built with pure Lua and zero external dependencies:
+built with pure lua and zero external dependencies:
 
 - **Terminal Integration** - Direct terminal control with `jobstart()` and stdin injection
 - **Autocomplete Simulation** - Triggers OpenCode's TUI autocomplete via keystrokes
